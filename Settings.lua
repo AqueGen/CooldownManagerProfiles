@@ -10,7 +10,7 @@ local LDBIcon = LibStub("LibDBIcon-1.0", true)
 if LDB then
     local cmLDB = LDB:NewDataObject("CooldownMaster", {
         type = "launcher",
-        icon = "Interface\\Icons\\spell_holy_avengingwrath",
+        icon = "Interface\\AddOns\\CooldownMaster\\icon",
         label = "CooldownMaster",
         OnClick = function(self, button)
             if button == "LeftButton" then
@@ -125,19 +125,6 @@ local function CreateSettingsPanel()
             if ns.db and ns.db.settings then
                 ns.db.settings.showMinimap = val
                 ns.UpdateMinimapIcon()
-            end
-        end
-    )
-    yPos = yPos - 30
-
-    -- Auto-switch on spec change
-    local cbAutoSwitch = CreateCheckbox(settingsFrame, "Auto-switch profile on spec change", yPos,
-        function()
-            return ns.db and ns.db.settings and ns.db.settings.autoSwitch
-        end,
-        function(val)
-            if ns.db and ns.db.settings then
-                ns.db.settings.autoSwitch = val
             end
         end
     )

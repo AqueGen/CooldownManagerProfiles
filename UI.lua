@@ -584,16 +584,12 @@ local function CreateMainFrame()
     -- Title
     local title = mainFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     title:SetPoint("TOP", 0, -14)
-    title:SetText(COLOR_TITLE .. "CooldownMaster v" .. ns.VERSION .. "|r")
+    title:SetText(COLOR_TITLE .. "CooldownMaster|r")
 
     -- Close
     local closeBtn = CreateFrame("Button", nil, mainFrame, "UIPanelCloseButton")
     closeBtn:SetPoint("TOPRIGHT", -4, -4)
 
-    -- Version
-    local ver = mainFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-    ver:SetPoint("BOTTOMRIGHT", -PADDING, 8)
-    ver:SetText(COLOR_DIM .. "v" .. ns.VERSION .. "|r")
 
     -- Resizable
     mainFrame:SetResizable(true)

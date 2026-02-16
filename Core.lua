@@ -137,7 +137,7 @@ CooldownMasterDB = {
         }
     },
 
-    settings = { autoSwitch = true },
+    settings = {},
 }
 ]]
 
@@ -189,7 +189,6 @@ function ns.InitDB()
     if not db.globalProfiles then db.globalProfiles = {} end
     if not db.characters then db.characters = {} end
     if not db.settings then db.settings = {} end
-    if db.settings.autoSwitch == nil then db.settings.autoSwitch = true end
     if db.settings.showMinimap == nil then db.settings.showMinimap = true end
     if db.settings.verboseChat == nil then db.settings.verboseChat = true end
     db.settings.uiScale = nil -- removed, use resize now

@@ -4,7 +4,7 @@
 ## Author: CooldownMaster
 ## Version: 2.0.0
 ## SavedVariables: CooldownMasterDB
-## IconTexture: Interface\Icons\spell_holy_avengingwrath
+## IconTexture: Interface\AddOns\CooldownMaster\icon
 ## Category: Combat
 
 Libs/LibStub/LibStub.lua
