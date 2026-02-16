@@ -186,6 +186,7 @@ function ns.GetBlizzardLayouts()
             end
             layouts[#layouts + 1] = {
                 id = layoutID, name = name, specTag = specTag, isDefault = isDef,
+                class = ns.GetClassToken(),
             }
         end
     end)
