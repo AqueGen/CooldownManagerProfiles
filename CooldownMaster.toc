@@ -2,7 +2,7 @@
 ## Title: CooldownMaster
 ## Notes: Unlimited profiles for the Blizzard Cooldown Manager with import/export.
 ## Author: AqueGen
-## Version: @project-version@
+## Version: 1.1.0
 ## X-Curse-Project-ID: 1464144
 ## SavedVariables: CooldownMasterDB
 ## IconTexture: Interface\AddOns\CooldownMaster\icon

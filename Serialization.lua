@@ -255,7 +255,7 @@ function ns.ImportString(str)
 end
 
 --- Apply imported data
-function ns.ApplyImport(decoded, scope)
+function ns.ApplyImport(decoded, scope, targetProfileUUID)
     if not decoded then return false, "No data." end
 
     if scope == "globalProfile" then
@@ -289,11 +289,12 @@ function ns.ApplyImport(decoded, scope)
         return true, "Imported profile '" .. name .. "' with " .. totalLayouts .. " layout(s)."
 
     elseif scope == "classLayouts" then
-        -- Import class layouts into the active global profile (or create one)
+        -- Import class layouts into target profile, active profile, or create one
         local classToken = decoded.class
         if not classToken then return false, "No class specified." end
 
-        local activeUUID = ns.GetActiveGlobalProfileUUID and ns.GetActiveGlobalProfileUUID()
+        local activeUUID = targetProfileUUID
+            or (ns.GetActiveGlobalProfileUUID and ns.GetActiveGlobalProfileUUID())
         if not activeUUID then
             -- Create a new profile to hold the import
             local uuid, err = ns.CreateGlobalProfile(decoded.profileName or "Imported")
@@ -459,7 +460,11 @@ function ns.ApplyImportClassLayouts(decoded, profileUUID, mode)
             if entry.data and entry.data ~= "" then
                 local name = entry.name or "Layout"
                 if existingNames[name] then
-                    name = name .. " (Copy)"
+                    local i = 2
+                    while existingNames[name .. " (" .. i .. ")"] do
+                        i = i + 1
+                    end
+                    name = name .. " (" .. i .. ")"
                 end
                 existing[#existing + 1] = {
                     name = name,

@@ -397,7 +397,7 @@ local function CreateProfileListRow(parent)
     delBtn:SetScript("OnLeave", GameTooltip_Hide)
     row.delBtn = delBtn
 
-    local renBtn = CreateBtn(row, "R", 20, 18)
+    local renBtn = CreateBtn(row, "Rename", 48, 18)
     renBtn:SetPoint("RIGHT", delBtn, "LEFT", -2, 0)
     renBtn:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_TOP")
@@ -1036,6 +1036,7 @@ local function RefreshProfileSection()
         row:SetScript("OnMouseUp", function(self, button)
             if button == "LeftButton" then
                 selectedProfileUUID = uuid
+                ns.SetActiveGlobalProfileUUID(uuid)
                 RefreshAll()
             end
         end)
@@ -1524,6 +1525,22 @@ end
 
 local importFrame
 
+local function GenerateCDMImportName(classToken, specName)
+    local parts = {}
+    local profileUUID = selectedProfileUUID
+        or (ns.GetActiveGlobalProfileUUID and ns.GetActiveGlobalProfileUUID())
+    if profileUUID and ns.db.globalProfiles[profileUUID] then
+        local profileName = ns.db.globalProfiles[profileUUID].name
+        if profileName and profileName ~= "" then
+            parts[#parts + 1] = profileName
+        end
+    end
+    local classDisplay = CLASS_DISPLAY[classToken] or classToken or "Unknown"
+    local classPart = specName and (classDisplay .. " " .. specName) or classDisplay
+    parts[#parts + 1] = classPart
+    return table.concat(parts, " - ")
+end
+
 function ns.ShowImportWindow()
     if not importFrame then
         importFrame = CreateBackdropFrame("CooldownMasterImportFrame", UIParent, 480, 452)
@@ -1555,14 +1572,41 @@ function ns.ShowImportWindow()
 
         local nameLabel = importFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
         nameLabel:SetPoint("TOPLEFT", PADDING + 4, -62)
-        nameLabel:SetText("Name (CDM):")
+        nameLabel:SetText("Name:")
+
+        local autoNameText = importFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+        autoNameText:SetPoint("TOPLEFT", PADDING + 44, -62)
+        autoNameText:SetPoint("RIGHT", -(PADDING + 84), 0)
+        autoNameText:SetJustifyH("LEFT")
+        autoNameText:SetWordWrap(false)
+        importFrame.autoNameText = autoNameText
 
         local nameBox = CreateFrame("EditBox", nil, importFrame, "InputBoxTemplate")
-        nameBox:SetSize(200, 22)
-        nameBox:SetPoint("TOPLEFT", PADDING + 80, -59)
+        nameBox:SetSize(280, 22)
+        nameBox:SetPoint("TOPLEFT", PADDING + 44, -59)
         nameBox:SetAutoFocus(false)
-        nameBox:SetText("Imported")
+        nameBox:Hide()
         importFrame.nameBox = nameBox
+
+        local customCB = CreateFrame("CheckButton", nil, importFrame, "UICheckButtonTemplate")
+        customCB:SetSize(24, 24)
+        customCB:SetPoint("TOPRIGHT", -(PADDING + 4), -58)
+        customCB.text = customCB:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+        customCB.text:SetPoint("RIGHT", customCB, "LEFT", -2, 0)
+        customCB.text:SetText("Custom")
+        customCB:SetScript("OnClick", function(self)
+            if self:GetChecked() then
+                autoNameText:Hide()
+                nameBox:SetText(autoNameText:GetText())
+                nameBox:Show()
+                nameBox:SetFocus()
+            else
+                nameBox:Hide()
+                nameBox:ClearFocus()
+                autoNameText:Show()
+            end
+        end)
+        importFrame.customCB = customCB
 
         local classDropdown = CreateCustomDropdown(importFrame, "Class (CDM):")
         classDropdown:SetPoint("TOPLEFT", PADDING + 4, -86)
@@ -1578,9 +1622,38 @@ function ns.ShowImportWindow()
         specDropdown:SetSelected(nil)
         importFrame.specDropdown = specDropdown
 
+        -- Profile dropdown for classLayouts scope
+        local profileDropdown = CreateCustomDropdown(importFrame, "Target profile:")
+        profileDropdown:SetPoint("TOPLEFT", PADDING + 4, -86)
+        profileDropdown:SetPoint("TOPRIGHT", -(PADDING + 4), -86)
+        profileDropdown:Hide()
+        importFrame.profileDropdown = profileDropdown
+
+        importFrame.RefreshProfileDropdown = function()
+            local profiles = ns.GetGlobalProfileList()
+            local items = {}
+            for _, p in ipairs(profiles) do
+                items[#items + 1] = { text = p.name, value = p.uuid }
+            end
+            profileDropdown:SetItems(items)
+            local defaultUUID = selectedProfileUUID or ns.GetActiveGlobalProfileUUID()
+            profileDropdown:SetSelected(defaultUUID)
+        end
+
+        importFrame.UpdateAutoName = function()
+            local cls = classDropdown:GetSelected() or ns.GetClassToken()
+            local spec = specDropdown:GetSelected()
+            autoNameText:SetText(GenerateCDMImportName(cls, spec))
+        end
+
         classDropdown.onChanged = function(classToken)
             specDropdown:SetItems(BuildSpecItems(classToken))
             specDropdown:SetSelected(nil)
+            importFrame.UpdateAutoName()
+        end
+
+        specDropdown.onChanged = function()
+            importFrame.UpdateAutoName()
         end
 
         local scrollFrame = CreateFrame("ScrollFrame", nil, importFrame, "UIPanelScrollFrameTemplate")
@@ -1592,12 +1665,19 @@ function ns.ShowImportWindow()
         editBox:SetAutoFocus(false)
         editBox:SetFontObject("ChatFontNormal")
         editBox:SetWidth(420)
+        editBox:SetHeight(210)
         editBox:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
         scrollFrame:SetScrollChild(editBox)
         importFrame.editBox = editBox
 
+        -- Click anywhere in scroll area → focus editBox
+        scrollFrame:EnableMouse(true)
+        scrollFrame:SetScript("OnMouseDown", function()
+            editBox:SetFocus()
+        end)
+
         local statusText = importFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-        statusText:SetPoint("BOTTOMLEFT", PADDING + 4, PADDING + 36)
+        statusText:SetPoint("BOTTOMLEFT", PADDING + 4, PADDING + 56)
         statusText:SetPoint("BOTTOMRIGHT", -PADDING - 4, PADDING + 36)
         statusText:SetJustifyH("LEFT")
         statusText:SetWordWrap(true)
@@ -1610,6 +1690,9 @@ function ns.ShowImportWindow()
                 importFrame.statusText:SetText(COLOR_DIM .. "Waiting for input...|r")
                 importFrame.decoded = nil
                 importFrame.scope = nil
+                importFrame.classDropdown:Hide()
+                importFrame.specDropdown:Hide()
+                importFrame.profileDropdown:Hide()
                 return
             end
 
@@ -1617,6 +1700,23 @@ function ns.ShowImportWindow()
             if decoded then
                 importFrame.decoded = decoded
                 importFrame.scope = scope
+
+                -- Toggle dropdowns based on scope
+                if scope == "classLayouts" then
+                    importFrame.classDropdown:Hide()
+                    importFrame.specDropdown:Hide()
+                    importFrame.profileDropdown:Show()
+                    importFrame.RefreshProfileDropdown()
+                elseif scope == "cdm" then
+                    importFrame.classDropdown:Show()
+                    importFrame.specDropdown:Show()
+                    importFrame.profileDropdown:Hide()
+                else
+                    importFrame.classDropdown:Hide()
+                    importFrame.specDropdown:Hide()
+                    importFrame.profileDropdown:Hide()
+                end
+
                 if scope == "cdm" then
                     importFrame.statusText:SetText(COLOR_GREEN .. "Detected: CDM layout string|r")
                 elseif scope == "globalProfile" then
@@ -1638,6 +1738,9 @@ function ns.ShowImportWindow()
             else
                 importFrame.decoded = nil
                 importFrame.scope = nil
+                importFrame.classDropdown:Hide()
+                importFrame.specDropdown:Hide()
+                importFrame.profileDropdown:Hide()
                 importFrame.statusText:SetText(COLOR_RED .. (err or "Invalid string.") .. "|r")
             end
         end)
@@ -1652,10 +1755,15 @@ function ns.ShowImportWindow()
 
             local scope = importFrame.scope
             if scope == "cdm" then
-                local name = importFrame.nameBox:GetText()
-                if not name then name = "" end
-                name = name:match("^%s*(.-)%s*$")
-                if name == "" then name = "Imported" end
+                local name
+                if importFrame.customCB:GetChecked() then
+                    name = importFrame.nameBox:GetText()
+                    if name then name = name:match("^%s*(.-)%s*$") end
+                    if not name or name == "" then name = "Imported" end
+                else
+                    name = importFrame.autoNameText:GetText()
+                    if not name or name == "" then name = "Imported" end
+                end
 
                 -- For CDM strings, import as template into library
                 local class = importFrame.classDropdown:GetSelected() or ns.GetClassToken()
@@ -1689,9 +1797,9 @@ function ns.ShowImportWindow()
 
             elseif scope == "classLayouts" then
                 local classToken = importFrame.decoded.class
-                local activeUUID = ns.GetActiveGlobalProfileUUID and ns.GetActiveGlobalProfileUUID()
-                if not activeUUID then
-                    -- No active profile — create one, then import directly (no conflicts possible)
+                local targetUUID = importFrame.profileDropdown:GetSelected()
+                if not targetUUID then
+                    -- No profile selected in dropdown — create one, then import directly
                     local ok, msg = ns.ApplyImport(importFrame.decoded, scope)
                     if ok then
                         ns.Print(COLOR_GREEN .. msg .. "|r")
@@ -1699,15 +1807,15 @@ function ns.ShowImportWindow()
                         ns.Print("|cFFFF0000Error:|r " .. (msg or "unknown"))
                     end
                 else
-                    local conflicts = ns.FindConflictingLayerNames(activeUUID, classToken, importFrame.decoded.layouts)
+                    local conflicts = ns.FindConflictingLayerNames(targetUUID, classToken, importFrame.decoded.layouts)
                     if #conflicts > 0 then
                         local conflictStr = table.concat(conflicts, ", ")
                         local dialog = StaticPopup_Show("COOLDOWNMASTER_IMPORT_LAYERS_CONFLICT", conflictStr)
                         if dialog then
-                            dialog.data = { decoded = importFrame.decoded, profileUUID = activeUUID }
+                            dialog.data = { decoded = importFrame.decoded, profileUUID = targetUUID }
                         end
                     else
-                        local ok, msg = ns.ApplyImport(importFrame.decoded, scope)
+                        local ok, msg = ns.ApplyImport(importFrame.decoded, scope, targetUUID)
                         if ok then
                             ns.Print(COLOR_GREEN .. msg .. "|r")
                         else
@@ -1738,13 +1846,53 @@ function ns.ShowImportWindow()
         cancelBtn:SetScript("OnClick", function()
             importFrame:Hide()
         end)
+
+        -- Paste button: hidden editbox captures Ctrl+V, then transfers to main editbox
+        local pasteBox = CreateFrame("EditBox", nil, importFrame)
+        pasteBox:SetSize(1, 1)
+        pasteBox:SetPoint("TOPLEFT", 0, 0)
+        pasteBox:SetAutoFocus(false)
+        pasteBox:SetMultiLine(true)
+        pasteBox:SetMaxLetters(0)
+        pasteBox:SetFontObject("ChatFontNormal")
+        pasteBox:SetAlpha(0)
+        pasteBox:EnableMouse(false)
+        pasteBox:SetScript("OnTextChanged", function(self, userInput)
+            if not userInput then return end
+            local text = self:GetText()
+            if text and text ~= "" then
+                editBox:SetText(text)
+                self:SetText("")
+                self:ClearFocus()
+                editBox:SetFocus()
+            end
+        end)
+        pasteBox:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
+
+        local pasteBtn = CreateBtn(importFrame, "Paste", 70, 28)
+        pasteBtn:SetPoint("BOTTOMLEFT", PADDING + 4, PADDING + 4)
+        pasteBtn:SetScript("OnClick", function()
+            pasteBox:SetText("")
+            pasteBox:SetFocus()
+        end)
+        pasteBtn:SetScript("OnEnter", function(self)
+            GameTooltip:SetOwner(self, "ANCHOR_TOP")
+            GameTooltip:SetText("Paste from Clipboard")
+            GameTooltip:AddLine("Click, then press Ctrl+V to paste.", 1, 1, 1, true)
+            GameTooltip:Show()
+        end)
+        pasteBtn:SetScript("OnLeave", GameTooltip_Hide)
     end
 
     importFrame.editBox:SetText("")
-    importFrame.nameBox:SetText("Imported")
+    importFrame.customCB:SetChecked(false)
+    importFrame.nameBox:Hide()
+    importFrame.nameBox:SetText("")
+    importFrame.autoNameText:Show()
     importFrame.classDropdown:SetSelected(ns.GetClassToken())
     importFrame.specDropdown:SetItems(BuildSpecItems(ns.GetClassToken()))
     importFrame.specDropdown:SetSelected(nil)
+    importFrame.UpdateAutoName()
     importFrame.statusText:SetText(COLOR_DIM .. "Waiting for input...|r")
     importFrame.decoded = nil
     importFrame.scope = nil
@@ -1795,12 +1943,40 @@ function ns.ShowEditTemplateWindow(uuid)
         nameLabel:SetPoint("TOPLEFT", PADDING + 4, -42)
         nameLabel:SetText("Name:")
 
+        local autoNameText = editTmplFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+        autoNameText:SetPoint("TOPLEFT", PADDING + 44, -42)
+        autoNameText:SetPoint("RIGHT", -(PADDING + 84), 0)
+        autoNameText:SetJustifyH("LEFT")
+        autoNameText:SetWordWrap(false)
+        editTmplFrame.autoNameText = autoNameText
+
         local nameBox = CreateFrame("EditBox", nil, editTmplFrame, "InputBoxTemplate")
-        nameBox:SetSize(200, 22)
-        nameBox:SetPoint("TOPLEFT", PADDING + 80, -39)
+        nameBox:SetSize(280, 22)
+        nameBox:SetPoint("TOPLEFT", PADDING + 44, -39)
         nameBox:SetAutoFocus(false)
         nameBox:SetMaxLetters(50)
+        nameBox:Hide()
         editTmplFrame.nameBox = nameBox
+
+        local customCB = CreateFrame("CheckButton", nil, editTmplFrame, "UICheckButtonTemplate")
+        customCB:SetSize(24, 24)
+        customCB:SetPoint("TOPRIGHT", -(PADDING + 4), -38)
+        customCB.text = customCB:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+        customCB.text:SetPoint("RIGHT", customCB, "LEFT", -2, 0)
+        customCB.text:SetText("Custom")
+        customCB:SetScript("OnClick", function(self)
+            if self:GetChecked() then
+                autoNameText:Hide()
+                nameBox:SetText(autoNameText:GetText())
+                nameBox:Show()
+                nameBox:SetFocus()
+            else
+                nameBox:Hide()
+                nameBox:ClearFocus()
+                autoNameText:Show()
+            end
+        end)
+        editTmplFrame.customCB = customCB
 
         -- Class
         local classDropdown = CreateCustomDropdown(editTmplFrame, "Class:")
@@ -1815,9 +1991,32 @@ function ns.ShowEditTemplateWindow(uuid)
         specDropdown:SetPoint("TOPRIGHT", -(PADDING + 4), -90)
         editTmplFrame.specDropdown = specDropdown
 
+        editTmplFrame.UpdateAutoName = function()
+            local cls = classDropdown:GetSelected() or "UNKNOWN"
+            local spec = specDropdown:GetSelected()
+            local profileUUID = selectedProfileUUID
+                or (ns.GetActiveGlobalProfileUUID and ns.GetActiveGlobalProfileUUID())
+            local parts = {}
+            if profileUUID and ns.db.globalProfiles[profileUUID] then
+                local pName = ns.db.globalProfiles[profileUUID].name
+                if pName and pName ~= "" then
+                    parts[#parts + 1] = pName
+                end
+            end
+            local classDisplay = CLASS_DISPLAY[cls] or cls
+            local classPart = spec and (classDisplay .. " " .. spec) or classDisplay
+            parts[#parts + 1] = classPart
+            autoNameText:SetText(table.concat(parts, " - "))
+        end
+
         classDropdown.onChanged = function(classToken)
             specDropdown:SetItems(BuildSpecItems(classToken))
             specDropdown:SetSelected(nil)
+            editTmplFrame.UpdateAutoName()
+        end
+
+        specDropdown.onChanged = function()
+            editTmplFrame.UpdateAutoName()
         end
 
         -- Data label
@@ -1846,8 +2045,13 @@ function ns.ShowEditTemplateWindow(uuid)
             local curUUID = editTmplFrame.editingUUID
             if not curUUID then return end
 
-            local name = (editTmplFrame.nameBox:GetText() or ""):match("^%s*(.-)%s*$")
-            if name == "" then
+            local name
+            if editTmplFrame.customCB:GetChecked() then
+                name = (editTmplFrame.nameBox:GetText() or ""):match("^%s*(.-)%s*$")
+            else
+                name = (editTmplFrame.autoNameText:GetText() or ""):match("^%s*(.-)%s*$")
+            end
+            if not name or name == "" then
                 ns.Print("|cFFFF0000Name cannot be empty.|r")
                 return
             end
@@ -1877,11 +2081,14 @@ function ns.ShowEditTemplateWindow(uuid)
 
     -- Populate fields from template
     editTmplFrame.editingUUID = uuid
-    editTmplFrame.nameBox:SetText(tmpl.name or "")
     editTmplFrame.classDropdown:SetItems(BuildClassItems())
     editTmplFrame.classDropdown:SetSelected(tmpl.class)
     editTmplFrame.specDropdown:SetItems(BuildSpecItems(tmpl.class))
     editTmplFrame.specDropdown:SetSelected(tmpl.spec)
+    editTmplFrame.customCB:SetChecked(false)
+    editTmplFrame.nameBox:Hide()
+    editTmplFrame.autoNameText:Show()
+    editTmplFrame.UpdateAutoName()
     editTmplFrame.dataBox:SetText(tmpl.data or "")
 
     editTmplFrame:Show()
