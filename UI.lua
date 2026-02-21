@@ -84,74 +84,30 @@ local function CreateBtn(parent, text, w, h)
     return btn
 end
 
----------------------------------------------------------------------------
--- Icon Buttons
----------------------------------------------------------------------------
-
-local ICONS = {
-    RENAME     = { tex = 136243,  char = "R", color = "FFCC00" },  -- INV_Inscription_Tradeskill01 (quill)
-    DELETE     = { tex = 135736,  char = "X", color = "FF4444" },  -- Spell_ChargeNegative (red circle)
-    EXPORT     = { tex = 134327,  char = "E", color = "4488FF" },  -- INV_Misc_Note_06 (scroll)
-    TO_LIBRARY = { tex = 134915,  char = "+", color = "00FF00" },  -- INV_Misc_Book_09 (book)
-    TO_PROFILE = { tex = 135738,  char = "+", color = "00FF00" },  -- Spell_ChargePositive (green plus)
-    EDIT       = { tex = 136243,  char = "E", color = "FFCC00" },  -- INV_Inscription_Tradeskill01 (quill)
-}
-
-local function CreateIconBtn(parent, icon, size, tooltipTitle, tooltipDesc)
-    local s = size or 18
+--- Frameless colored text button for row actions
+local function CreateTextBtn(parent, text, r, g, b, w, h)
     local btn = CreateFrame("Button", nil, parent)
-    btn:SetSize(s, s)
+    btn:SetSize(w or 40, h or 18)
 
-    -- Icon texture (crop edges for clean look at small sizes)
-    local tex = btn:CreateTexture(nil, "ARTWORK")
-    tex:SetPoint("TOPLEFT", 1, -1)
-    tex:SetPoint("BOTTOMRIGHT", -1, 1)
-    tex:SetTexture(icon.tex)
-    tex:SetTexCoord(0.08, 0.92, 0.08, 0.92)
-    btn._icon = tex
-
-    -- Fallback colored letter (visible if texture file missing)
     local fs = btn:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
     fs:SetPoint("CENTER", 0, 0)
-    fs:SetText("|cFF" .. icon.color .. icon.char .. "|r")
-    btn._fallbackText = fs
+    fs:SetText(text)
+    fs:SetTextColor(r, g, b)
+    btn:SetFontString(fs)
+    btn._normalColor = {r, g, b}
 
-    -- Highlight on hover
     local hl = btn:CreateTexture(nil, "HIGHLIGHT")
     hl:SetAllPoints()
-    hl:SetColorTexture(1, 1, 1, 0.25)
+    hl:SetColorTexture(1, 1, 1, 0.12)
     hl:SetBlendMode("ADD")
 
-    -- Click feedback: dim slightly on press
-    btn:SetScript("OnMouseDown", function(self) self._icon:SetAlpha(0.6) end)
-    btn:SetScript("OnMouseUp", function(self)
-        if self:IsEnabled() then self._icon:SetAlpha(1) end
-    end)
-
-    -- Disabled state
     btn:SetScript("OnDisable", function(self)
-        self._icon:SetDesaturated(true)
-        self._icon:SetAlpha(0.35)
-        self._fallbackText:SetAlpha(0.35)
+        self:GetFontString():SetTextColor(0.4, 0.4, 0.4)
     end)
     btn:SetScript("OnEnable", function(self)
-        self._icon:SetDesaturated(false)
-        self._icon:SetAlpha(1)
-        self._fallbackText:SetAlpha(1)
+        local c = self._normalColor
+        self:GetFontString():SetTextColor(c[1], c[2], c[3])
     end)
-
-    -- Tooltip
-    if tooltipTitle then
-        btn:SetScript("OnEnter", function(self)
-            GameTooltip:SetOwner(self, "ANCHOR_TOP")
-            GameTooltip:SetText(tooltipTitle)
-            if tooltipDesc then
-                GameTooltip:AddLine(tooltipDesc, 1, 1, 1, true)
-            end
-            GameTooltip:Show()
-        end)
-        btn:SetScript("OnLeave", GameTooltip_Hide)
-    end
 
     return btn
 end
@@ -458,12 +414,26 @@ local function CreateProfileListRow(parent)
     marker:SetWidth(14)
     row.marker = marker
 
-    local delBtn = CreateIconBtn(row, ICONS.DELETE, 18, "Delete Profile", "Remove this profile for all characters.")
+    local delBtn = CreateTextBtn(row, "X", 1, 0.27, 0.27, 18, 18)
     delBtn:SetPoint("RIGHT", -2, 0)
+    delBtn:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_TOP")
+        GameTooltip:SetText("Delete Profile")
+        GameTooltip:AddLine("Remove this profile for all characters.", 1, 1, 1, true)
+        GameTooltip:Show()
+    end)
+    delBtn:SetScript("OnLeave", GameTooltip_Hide)
     row.delBtn = delBtn
 
-    local renBtn = CreateIconBtn(row, ICONS.RENAME, 18, "Rename Profile", "Change this profile's name.")
+    local renBtn = CreateTextBtn(row, "Rename", 1, 0.8, 0, 44, 18)
     renBtn:SetPoint("RIGHT", delBtn, "LEFT", -2, 0)
+    renBtn:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_TOP")
+        GameTooltip:SetText("Rename Profile")
+        GameTooltip:AddLine("Change this profile's name.", 1, 1, 1, true)
+        GameTooltip:Show()
+    end)
+    renBtn:SetScript("OnLeave", GameTooltip_Hide)
     row.renBtn = renBtn
 
     local nameText = row:CreateFontString(nil, "OVERLAY", "GameFontNormal")
@@ -505,28 +475,28 @@ local function CreateProfileLayoutRow(parent)
     bg:SetColorTexture(0.12, 0.12, 0.18, 0.3)
     row.bg = bg
 
-    local delBtn = CreateIconBtn(row, ICONS.DELETE, 18, "Remove from Profile", "Remove this layout from the profile.")
-    delBtn:SetPoint("RIGHT", -4, 0)
-    row.delBtn = delBtn
-
-    local libBtn = CreateIconBtn(row, ICONS.TO_LIBRARY, 18, "Save to Library", "Copy this layout to the template library.")
-    libBtn:SetPoint("RIGHT", delBtn, "LEFT", -2, 0)
-    row.libBtn = libBtn
-
-    local expBtn = CreateIconBtn(row, ICONS.EXPORT, 18, "Export Layout", "Copy layout string to clipboard.")
-    expBtn:SetPoint("RIGHT", libBtn, "LEFT", -2, 0)
-    row.expBtn = expBtn
-
-    local renameBtn = CreateIconBtn(row, ICONS.RENAME, 18, "Rename Layout", "Change this layout's name.")
-    renameBtn:SetPoint("RIGHT", expBtn, "LEFT", -2, 0)
-    row.renameBtn = renameBtn
-
     local nameText = row:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     nameText:SetPoint("LEFT", 8, 0)
-    nameText:SetPoint("RIGHT", renameBtn, "LEFT", -4, 0)
+    nameText:SetPoint("RIGHT", -165, 0)
     nameText:SetJustifyH("LEFT")
     nameText:SetWordWrap(false)
     row.nameText = nameText
+
+    local renameBtn = CreateTextBtn(row, "Rename", 1, 0.8, 0, 44, 18)
+    renameBtn:SetPoint("RIGHT", -121, 0)
+    row.renameBtn = renameBtn
+
+    local expBtn = CreateTextBtn(row, "Export", 0.27, 0.53, 1, 40, 18)
+    expBtn:SetPoint("RIGHT", -73, 0)
+    row.expBtn = expBtn
+
+    local libBtn = CreateTextBtn(row, "+Library", 0, 0.8, 0, 50, 18)
+    libBtn:SetPoint("RIGHT", -18, 0)
+    row.libBtn = libBtn
+
+    local delBtn = CreateTextBtn(row, "X", 1, 0.27, 0.27, 18, 18)
+    delBtn:SetPoint("RIGHT", -4, 0)
+    row.delBtn = delBtn
 
     row:EnableMouse(true)
     row:SetScript("OnEnter", function(self) self.bg:SetColorTexture(0.18, 0.18, 0.26, 0.4) end)
@@ -585,28 +555,27 @@ local function CreateTemplateRow(parent)
     bg:SetColorTexture(0.2, 0.15, 0.1, 0.3)
     row.bg = bg
 
-    local delBtn = CreateIconBtn(row, ICONS.DELETE, 18, "Delete Template", "Remove this template from the library.")
-    delBtn:SetPoint("RIGHT", -2, 0)
-    row.delBtn = delBtn
-
-    local editBtn = CreateIconBtn(row, ICONS.EDIT, 18, "Edit Template", "Edit template name, class, and spec.")
-    editBtn:SetPoint("RIGHT", delBtn, "LEFT", -2, 0)
-    row.editBtn = editBtn
-
-    local expBtn = CreateIconBtn(row, ICONS.EXPORT, 18, "Export Template", "Copy template string to clipboard.")
-    expBtn:SetPoint("RIGHT", editBtn, "LEFT", -2, 0)
-    row.expBtn = expBtn
-
-    local profBtn = CreateIconBtn(row, ICONS.TO_PROFILE, 18, "Add to Profile", "Add this template to the selected profile.")
-    profBtn:SetPoint("RIGHT", expBtn, "LEFT", -2, 0)
-    row.profBtn = profBtn
-
     local nameText = row:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     nameText:SetPoint("LEFT", 8, 0)
-    nameText:SetPoint("RIGHT", profBtn, "LEFT", -4, 0)
+    nameText:SetPoint("RIGHT", -150, 0)
     nameText:SetJustifyH("LEFT")
     nameText:SetWordWrap(false)
     row.nameText = nameText
+
+    local profBtn = CreateTextBtn(row, "+Profile", 0, 0.8, 0, 50, 18)
+    profBtn:SetPoint("RIGHT", -100, 0)
+    row.profBtn = profBtn
+
+    local expBtn = CreateTextBtn(row, "Export", 0.27, 0.53, 1, 40, 18)
+    expBtn:SetPoint("RIGHT", -58, 0)
+    row.expBtn = expBtn
+
+    local editBtn = CreateTextBtn(row, "Edit", 1, 0.8, 0, 28, 18)
+    editBtn:SetPoint("RIGHT", -22, 0)
+    row.editBtn = editBtn
+
+    local delBtn = CreateTextBtn(row, "X", 1, 0.27, 0.27, 18, 18)
+    delBtn:SetPoint("RIGHT", -2, 0)
     row.delBtn = delBtn
 
     row:EnableMouse(true)
