@@ -1,6 +1,6 @@
-# CooldownMaster
+# Cooldown Manager Profiles
 
-[![CurseForge](https://img.shields.io/badge/CurseForge-CooldownMaster-orange)](https://www.curseforge.com/wow/addons/cooldownmaster)
+[![CurseForge](https://img.shields.io/badge/CurseForge-CooldownManagerProfiles-orange)](https://www.curseforge.com/wow/addons/cooldownmanagerprofiles)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![WoW Version](https://img.shields.io/badge/WoW-12.0.1+-brightgreen)](https://worldofwarcraft.com)
 
@@ -19,7 +19,7 @@ Unlimited profiles for the Blizzard Cooldown Manager with global template librar
 
 ## Installation
 
-1. Download and extract into `Interface/AddOns/CooldownMaster`
+1. Download and extract into `Interface/AddOns/CooldownManagerProfiles`
 2. Restart World of Warcraft or `/reload`
 3. Type `/cm` to open the main window
 
@@ -56,10 +56,23 @@ The main window is split into three columns:
 
 ## Data Storage
 
-All data is stored in `CooldownMasterDB` (WoW SavedVariables):
+All data is stored in `CooldownManagerProfilesDB` (WoW SavedVariables):
 
 - **Account-wide**: Global profiles, template library
 - **Per-character**: Active profile selection, Blizzard layout snapshots, stored layouts
+
+## Migrating from CooldownMaster
+
+The addon was renamed from **CooldownMaster** to **CooldownManagerProfiles**. Your saved data is not lost, but WoW won't transfer it automatically because the addon folder name changed.
+
+To migrate manually:
+
+1. **Close WoW completely** (not just `/reload`).
+2. Open the `WTF/Account/<YourAccount>/SavedVariables/` folder.
+3. Open `CooldownMaster.lua` in a text editor.
+4. Replace `CooldownMasterDB` with `CooldownManagerProfilesDB` (there should be one occurrence at the top).
+5. Save the file as `CooldownManagerProfiles.lua` in the same folder.
+6. Launch WoW — all your profiles and templates will be back.
 
 ## Requirements
 

@@ -8,10 +8,10 @@ local LDB = LibStub("LibDataBroker-1.1", true)
 local LDBIcon = LibStub("LibDBIcon-1.0", true)
 
 if LDB then
-    local cmLDB = LDB:NewDataObject("CooldownMaster", {
+    local cmLDB = LDB:NewDataObject("Cooldown Manager Profiles", {
         type = "launcher",
-        icon = "Interface\\AddOns\\CooldownMaster\\icon",
-        label = "CooldownMaster",
+        icon = "Interface\\AddOns\\CooldownManagerProfiles\\icon",
+        label = "CM Profiles",
         OnClick = function(self, button)
             if button == "LeftButton" then
                 ns.ToggleUI()
@@ -20,7 +20,7 @@ if LDB then
             end
         end,
         OnTooltipShow = function(tip)
-            tip:AddLine("|cFF00CCFFCooldownMaster|r")
+            tip:AddLine("|cFF00CCFFCooldown Manager Profiles|r")
             local active = ns.GetActiveProfileName and ns.GetActiveProfileName()
             if active then
                 tip:AddLine("Active: |cFF00FF00" .. active .. "|r", 1, 1, 1)
@@ -40,20 +40,20 @@ end
 function ns.InitMinimapIcon()
     if not LDBIcon or not ns.cmLDB then return end
     if not ns.db or not ns.db.settings then return end
-    LDBIcon:Register("CooldownMaster", ns.cmLDB, ns.db.settings.minimapPos)
+    LDBIcon:Register("Cooldown Manager Profiles", ns.cmLDB, ns.db.settings.minimapPos)
     if ns.db.settings.showMinimap then
-        LDBIcon:Show("CooldownMaster")
+        LDBIcon:Show("Cooldown Manager Profiles")
     else
-        LDBIcon:Hide("CooldownMaster")
+        LDBIcon:Hide("Cooldown Manager Profiles")
     end
 end
 
 function ns.UpdateMinimapIcon()
     if not LDBIcon then return end
     if ns.db and ns.db.settings and ns.db.settings.showMinimap then
-        LDBIcon:Show("CooldownMaster")
+        LDBIcon:Show("Cooldown Manager Profiles")
     else
-        LDBIcon:Hide("CooldownMaster")
+        LDBIcon:Hide("Cooldown Manager Profiles")
     end
 end
 
@@ -85,13 +85,13 @@ end
 local function CreateSettingsPanel()
     if settingsFrame then return settingsFrame end
 
-    settingsFrame = CreateFrame("Frame", "CooldownMasterSettingsPanel", UIParent)
+    settingsFrame = CreateFrame("Frame", "Cooldown Manager ProfilesSettingsPanel", UIParent)
     settingsFrame:Hide()
 
     -- Title
     local title = settingsFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     title:SetPoint("TOPLEFT", 16, -16)
-    title:SetText("|cFF00CCFFCooldownMaster|r Settings")
+    title:SetText("|cFF00CCFFCooldown Manager Profiles|r Settings")
 
     local subtitle = settingsFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
     subtitle:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -8)
@@ -99,11 +99,11 @@ local function CreateSettingsPanel()
 
     local yPos = -70
 
-    -- Open CooldownMaster button
+    -- Open Cooldown Manager Profiles button
     local openBtn = CreateFrame("Button", nil, settingsFrame, "UIPanelButtonTemplate")
     openBtn:SetSize(180, 28)
     openBtn:SetPoint("TOPLEFT", 16, yPos)
-    openBtn:SetText("Open CooldownMaster")
+    openBtn:SetText("Open CM Profiles")
     openBtn:SetScript("OnClick", function()
         ns.ToggleUI()
     end)
@@ -161,7 +161,7 @@ local function CreateSettingsPanel()
     infoText:SetJustifyH("LEFT")
     infoText:SetWordWrap(true)
     infoText:SetText(
-        "CooldownMaster lets you manage Cooldown Manager layouts with " ..
+        "CM Profiles lets you manage Cooldown Manager layouts with " ..
         "a global Template Library and cross-character Profiles.\n\n" ..
         "Features:\n" ..
         "  - Template Library: store layouts organized by class\n" ..
@@ -183,7 +183,7 @@ function ns.RegisterSettings()
     if not Settings or not Settings.RegisterCanvasLayoutCategory then return end
 
     local panel = CreateSettingsPanel()
-    local category = Settings.RegisterCanvasLayoutCategory(panel, "CooldownMaster")
+    local category = Settings.RegisterCanvasLayoutCategory(panel, "Cooldown Manager Profiles")
     Settings.RegisterAddOnCategory(category)
     settingsCategoryID = category:GetID()
 end

@@ -1,4 +1,4 @@
-package-as: CooldownMaster
+package-as: CooldownManagerProfiles
 
 ignore:
   - README.md

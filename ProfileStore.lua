@@ -184,9 +184,14 @@ function ns.GetBlizzardLayouts()
             if CooldownManagerLayout_IsDefaultLayout then
                 isDef = CooldownManagerLayout_IsDefaultLayout(layout) or false
             end
+            local canActivate = true
+            if lm.CanActivateLayout then
+                local cOk, can = pcall(lm.CanActivateLayout, lm, layout)
+                if cOk then canActivate = can end
+            end
             layouts[#layouts + 1] = {
                 id = layoutID, name = name, specTag = specTag, isDefault = isDef,
-                class = ns.GetClassToken(),
+                class = ns.GetClassToken(), canActivate = canActivate,
             }
         end
     end)
@@ -206,7 +211,63 @@ function ns.GetBlizzardLayouts()
             l.isActive = (l.id == activeID)
         end
     end
+    -- Append Starter Layout (Blizzard default) at the end
+    if lm.GetDefaultLayoutID then
+        local defOk, defID = pcall(lm.GetDefaultLayoutID, lm)
+        if defOk and defID then
+            local alreadyListed = false
+            for _, l in ipairs(layouts) do
+                if l.id == defID then alreadyListed = true; break end
+            end
+            if not alreadyListed then
+                local isActive = (activeOk and activeID == defID)
+                if not isActive and lm.IsUsingDefaultLayout then
+                    local uOk, uDef = pcall(lm.IsUsingDefaultLayout, lm)
+                    if uOk then isActive = uDef end
+                end
+                layouts[#layouts + 1] = {
+                    id = defID, name = "Starter Layout", specTag = "",
+                    isDefault = true, class = ns.GetClassToken(),
+                    isActive = isActive, canActivate = true,
+                }
+            end
+        end
+    end
     return layouts
+end
+
+function ns.ActivateBlizzardLayout(layoutID)
+    if InCombatLockdown() then return false, "Cannot switch layouts in combat." end
+    local lm = ns.GetLayoutManager()
+    if not lm then return false, "Layout manager not available." end
+    local isDefault = lm.IsDefaultLayoutID and pcall(lm.IsDefaultLayoutID, lm, layoutID)
+        and lm:IsDefaultLayoutID(layoutID)
+    -- Try Blizzard's high-level API first (handles save, dirty-mark, notify)
+    if not isDefault and CooldownViewerSettings
+        and CooldownViewerSettings.SetActiveLayoutByID then
+        local ok = pcall(CooldownViewerSettings.SetActiveLayoutByID,
+                         CooldownViewerSettings, layoutID)
+        if ok then return true end
+    end
+    -- Fallback: direct LayoutManager calls + manual event trigger
+    if isDefault then
+        if not lm.UseDefaultLayout then return false, "UseDefaultLayout not supported." end
+        local ok, err = pcall(lm.UseDefaultLayout, lm)
+        if not ok then return false, tostring(err) end
+    else
+        if not lm.SetActiveLayoutByID then return false, "SetActiveLayoutByID not supported." end
+        local ok, err = pcall(lm.SetActiveLayoutByID, lm, layoutID)
+        if not ok then return false, tostring(err) end
+    end
+    if lm.SaveLayouts then pcall(lm.SaveLayouts, lm) end
+    if lm.NotifyListeners then pcall(lm.NotifyListeners, lm) end
+    -- Fire the event CDM viewers listen for to refresh their display
+    if EventRegistry and EventRegistry.TriggerEvent then
+        pcall(EventRegistry.TriggerEvent, EventRegistry,
+              "CooldownViewerSettings.OnDataChanged")
+    end
+    ns.RefreshViewers()
+    return true
 end
 
 function ns.GetBlizzardLayoutCount()
@@ -214,7 +275,17 @@ function ns.GetBlizzardLayoutCount()
     if not lm or not lm.EnumerateLayouts then return 0 end
     local n = 0
     local ok = pcall(function()
-        for _ in lm:EnumerateLayouts() do n = n + 1 end
+        for layoutID, layout in lm:EnumerateLayouts() do
+            local isDef = false
+            if CooldownManagerLayout_IsDefaultLayout then
+                isDef = CooldownManagerLayout_IsDefaultLayout(layout) or false
+            end
+            if not isDef and lm.IsDefaultLayoutID then
+                local dOk, isDefID = pcall(lm.IsDefaultLayoutID, lm, layoutID)
+                if dOk and isDefID then isDef = true end
+            end
+            if not isDef then n = n + 1 end
+        end
     end)
     return ok and n or 0
 end
@@ -1027,15 +1098,14 @@ end
 
 function ns.RefreshViewers()
     C_Timer.After(0.1, function()
-        if CooldownViewerSettings and CooldownViewerSettings.CheckSaveCurrentLayout then
-            pcall(CooldownViewerSettings.CheckSaveCurrentLayout, CooldownViewerSettings)
-        end
         for _, name in ipairs({
             "EssentialCooldownViewer", "UtilityCooldownViewer",
             "BuffIconCooldownViewer", "TrackedBarCooldownViewer",
         }) do
             local v = _G[name]
             if v then
+                if v.CacheLayoutSettings then pcall(v.CacheLayoutSettings, v) end
+                if v.UpdateSystem then pcall(v.UpdateSystem, v) end
                 if v.RefreshData then pcall(v.RefreshData, v) end
                 if v.RefreshLayout then pcall(v.RefreshLayout, v) end
             end
@@ -1048,7 +1118,7 @@ end
 ---------------------------------------------------------------------------
 
 StaticPopupDialogs["COOLDOWNMASTER_SAVE_PROFILE"] = {
-    text = "CooldownMaster\nSave current state as profile:",
+    text = "CM Profiles\nSave current state as profile:",
     button1 = "Save", button2 = "Cancel",
     hasEditBox = true, timeout = 0, whileDead = true, hideOnEscape = true,
     OnShow = function(self)
@@ -1072,7 +1142,7 @@ StaticPopupDialogs["COOLDOWNMASTER_SAVE_PROFILE"] = {
 }
 
 StaticPopupDialogs["COOLDOWNMASTER_NEW_PROFILE"] = {
-    text = "CooldownMaster\nNew profile name:",
+    text = "CM Profiles\nNew profile name:",
     button1 = "Create", button2 = "Cancel",
     hasEditBox = true, timeout = 0, whileDead = true, hideOnEscape = true,
     OnShow = function(self) self.EditBox:SetText(""); self.EditBox:SetFocus() end,
@@ -1095,7 +1165,7 @@ StaticPopupDialogs["COOLDOWNMASTER_NEW_PROFILE"] = {
 }
 
 StaticPopupDialogs["COOLDOWNMASTER_DELETE_PROFILE"] = {
-    text = "CooldownMaster\nDelete profile '%s'?",
+    text = "CM Profiles\nDelete profile '%s'?",
     button1 = "Delete", button2 = "Cancel",
     timeout = 0, whileDead = true, hideOnEscape = true, showAlert = true,
     OnAccept = function(self, data)
@@ -1106,7 +1176,7 @@ StaticPopupDialogs["COOLDOWNMASTER_DELETE_PROFILE"] = {
 }
 
 StaticPopupDialogs["COOLDOWNMASTER_RENAME_PROFILE"] = {
-    text = "CooldownMaster\nRename profile '%s':",
+    text = "CM Profiles\nRename profile '%s':",
     button1 = "Rename", button2 = "Cancel",
     hasEditBox = true, timeout = 0, whileDead = true, hideOnEscape = true,
     OnShow = function(self, data)
@@ -1130,7 +1200,7 @@ StaticPopupDialogs["COOLDOWNMASTER_RENAME_PROFILE"] = {
 }
 
 StaticPopupDialogs["COOLDOWNMASTER_STORE_CONFIRM"] = {
-    text = "CooldownMaster\nStore '%s' to unattached and free a Blizzard slot?",
+    text = "CM Profiles\nStore '%s' to unattached and free a Blizzard slot?",
     button1 = "Store", button2 = "Cancel",
     timeout = 0, whileDead = true, hideOnEscape = true,
     OnAccept = function(self, data)
@@ -1141,7 +1211,7 @@ StaticPopupDialogs["COOLDOWNMASTER_STORE_CONFIRM"] = {
 }
 
 StaticPopupDialogs["COOLDOWNMASTER_COPY_BLIZZARD"] = {
-    text = "CooldownMaster\nCopy layout '%s' to storage?",
+    text = "CM Profiles\nCopy layout '%s' to storage?",
     button1 = "Copy", button2 = "Cancel",
     timeout = 0, whileDead = true, hideOnEscape = true,
     OnAccept = function(self, data)
@@ -1152,7 +1222,7 @@ StaticPopupDialogs["COOLDOWNMASTER_COPY_BLIZZARD"] = {
 }
 
 StaticPopupDialogs["COOLDOWNMASTER_DELETE_BLIZZARD"] = {
-    text = "CooldownMaster\nDelete Blizzard layout '%s'?\nThis cannot be undone.",
+    text = "CM Profiles\nDelete Blizzard layout '%s'?\nThis cannot be undone.",
     button1 = "Delete", button2 = "Cancel",
     timeout = 0, whileDead = true, hideOnEscape = true, showAlert = true,
     OnAccept = function(self, data)
@@ -1163,7 +1233,7 @@ StaticPopupDialogs["COOLDOWNMASTER_DELETE_BLIZZARD"] = {
 }
 
 StaticPopupDialogs["COOLDOWNMASTER_RENAME_BLIZZARD"] = {
-    text = "CooldownMaster\nRename Blizzard layout '%s':",
+    text = "CM Profiles\nRename Blizzard layout '%s':",
     button1 = "Rename", button2 = "Cancel",
     hasEditBox = true, timeout = 0, whileDead = true, hideOnEscape = true,
     OnShow = function(self, data)
@@ -1186,7 +1256,7 @@ StaticPopupDialogs["COOLDOWNMASTER_RENAME_BLIZZARD"] = {
 }
 
 StaticPopupDialogs["COOLDOWNMASTER_DELETE_STORED"] = {
-    text = "CooldownMaster\nDelete stored layout '%s'?",
+    text = "CM Profiles\nDelete stored layout '%s'?",
     button1 = "Delete", button2 = "Cancel",
     timeout = 0, whileDead = true, hideOnEscape = true, showAlert = true,
     OnAccept = function(self, data)
@@ -1197,7 +1267,7 @@ StaticPopupDialogs["COOLDOWNMASTER_DELETE_STORED"] = {
 }
 
 StaticPopupDialogs["COOLDOWNMASTER_RENAME_STORED"] = {
-    text = "CooldownMaster\nRename stored layout '%s':",
+    text = "CM Profiles\nRename stored layout '%s':",
     button1 = "Rename", button2 = "Cancel",
     hasEditBox = true, timeout = 0, whileDead = true, hideOnEscape = true,
     OnShow = function(self, data)
@@ -1220,7 +1290,7 @@ StaticPopupDialogs["COOLDOWNMASTER_RENAME_STORED"] = {
 }
 
 StaticPopupDialogs["COOLDOWNMASTER_IMPORT_CDM_NAME"] = {
-    text = "CooldownMaster\nName for imported layout:",
+    text = "CM Profiles\nName for imported layout:",
     button1 = "Import", button2 = "Cancel",
     hasEditBox = true, timeout = 0, whileDead = true, hideOnEscape = true,
     OnShow = function(self)
@@ -1247,7 +1317,7 @@ StaticPopupDialogs["COOLDOWNMASTER_IMPORT_CDM_NAME"] = {
 ---------------------------------------------------------------------------
 
 StaticPopupDialogs["COOLDOWNMASTER_NEW_GLOBAL_PROFILE"] = {
-    text = "CooldownMaster\nNew global profile name:",
+    text = "CM Profiles\nNew global profile name:",
     button1 = "Create", button2 = "Cancel",
     hasEditBox = true, timeout = 0, whileDead = true, hideOnEscape = true,
     OnShow = function(self) self.EditBox:SetText(""); self.EditBox:SetFocus() end,
@@ -1270,7 +1340,7 @@ StaticPopupDialogs["COOLDOWNMASTER_NEW_GLOBAL_PROFILE"] = {
 }
 
 StaticPopupDialogs["COOLDOWNMASTER_DELETE_GLOBAL_PROFILE"] = {
-    text = "CooldownMaster\nDelete global profile '%s'?\nThis will remove it for all characters.",
+    text = "CM Profiles\nDelete global profile '%s'?\nThis will remove it for all characters.",
     button1 = "Delete", button2 = "Cancel",
     timeout = 0, whileDead = true, hideOnEscape = true, showAlert = true,
     OnAccept = function(self, data)
@@ -1281,7 +1351,7 @@ StaticPopupDialogs["COOLDOWNMASTER_DELETE_GLOBAL_PROFILE"] = {
 }
 
 StaticPopupDialogs["COOLDOWNMASTER_RENAME_GLOBAL_PROFILE"] = {
-    text = "CooldownMaster\nRename global profile '%s':",
+    text = "CM Profiles\nRename global profile '%s':",
     button1 = "Rename", button2 = "Cancel",
     hasEditBox = true, timeout = 0, whileDead = true, hideOnEscape = true,
     OnShow = function(self, data)
@@ -1304,7 +1374,7 @@ StaticPopupDialogs["COOLDOWNMASTER_RENAME_GLOBAL_PROFILE"] = {
 }
 
 StaticPopupDialogs["COOLDOWNMASTER_DELETE_TEMPLATE"] = {
-    text = "CooldownMaster\nDelete template '%s'?",
+    text = "CM Profiles\nDelete template '%s'?",
     button1 = "Delete", button2 = "Cancel",
     timeout = 0, whileDead = true, hideOnEscape = true, showAlert = true,
     OnAccept = function(self, data)
@@ -1315,7 +1385,7 @@ StaticPopupDialogs["COOLDOWNMASTER_DELETE_TEMPLATE"] = {
 }
 
 StaticPopupDialogs["COOLDOWNMASTER_RENAME_TEMPLATE"] = {
-    text = "CooldownMaster\nRename template '%s':",
+    text = "CM Profiles\nRename template '%s':",
     button1 = "Rename", button2 = "Cancel",
     hasEditBox = true, timeout = 0, whileDead = true, hideOnEscape = true,
     OnShow = function(self, data)
@@ -1338,7 +1408,7 @@ StaticPopupDialogs["COOLDOWNMASTER_RENAME_TEMPLATE"] = {
 }
 
 StaticPopupDialogs["COOLDOWNMASTER_REMOVE_FROM_PROFILE"] = {
-    text = "CooldownMaster\nRemove layout '%s' from this profile?",
+    text = "CM Profiles\nRemove layout '%s' from this profile?",
     button1 = "Remove", button2 = "Cancel",
     timeout = 0, whileDead = true, hideOnEscape = true, showAlert = true,
     OnAccept = function(self, data)
@@ -1349,7 +1419,7 @@ StaticPopupDialogs["COOLDOWNMASTER_REMOVE_FROM_PROFILE"] = {
 }
 
 StaticPopupDialogs["COOLDOWNMASTER_RENAME_PROFILE_LAYOUT"] = {
-    text = "CooldownMaster\nRename layout '%s':",
+    text = "CM Profiles\nRename layout '%s':",
     button1 = "Rename", button2 = "Cancel",
     hasEditBox = true, timeout = 0, whileDead = true, hideOnEscape = true,
     OnShow = function(self, data)
@@ -1376,7 +1446,7 @@ StaticPopupDialogs["COOLDOWNMASTER_RENAME_PROFILE_LAYOUT"] = {
 ---------------------------------------------------------------------------
 
 StaticPopupDialogs["COOLDOWNMASTER_IMPORT_PROFILE_CONFLICT"] = {
-    text = "CooldownMaster\nA profile named '%s' already exists.",
+    text = "CM Profiles\nA profile named '%s' already exists.",
     button1 = "Create a Copy", button2 = "Cancel", button3 = "Overwrite",
     timeout = 0, whileDead = true, hideOnEscape = true,
     OnAccept = function(self, data)
@@ -1392,7 +1462,7 @@ StaticPopupDialogs["COOLDOWNMASTER_IMPORT_PROFILE_CONFLICT"] = {
 }
 
 StaticPopupDialogs["COOLDOWNMASTER_IMPORT_LAYERS_CONFLICT"] = {
-    text = "CooldownMaster\nThese layers already exist:\n%s",
+    text = "CM Profiles\nThese layers already exist:\n%s",
     button1 = "Create Copies", button2 = "Cancel", button3 = "Overwrite",
     timeout = 0, whileDead = true, hideOnEscape = true,
     OnAccept = function(self, data)

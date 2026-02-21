@@ -251,7 +251,7 @@ function ns.ImportString(str)
         return decoded, "template", nil
     end
 
-    return nil, nil, "Unrecognized format. Paste a CDM string (1|...) or CooldownMaster export."
+    return nil, nil, "Unrecognized format. Paste a CDM string (1|...) or CM Profiles export."
 end
 
 --- Apply imported data

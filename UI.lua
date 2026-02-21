@@ -84,6 +84,78 @@ local function CreateBtn(parent, text, w, h)
     return btn
 end
 
+---------------------------------------------------------------------------
+-- Icon Buttons
+---------------------------------------------------------------------------
+
+local ICONS = {
+    RENAME     = { tex = 136243,  char = "R", color = "FFCC00" },  -- INV_Inscription_Tradeskill01 (quill)
+    DELETE     = { tex = 135736,  char = "X", color = "FF4444" },  -- Spell_ChargeNegative (red circle)
+    EXPORT     = { tex = 134327,  char = "E", color = "4488FF" },  -- INV_Misc_Note_06 (scroll)
+    TO_LIBRARY = { tex = 134915,  char = "+", color = "00FF00" },  -- INV_Misc_Book_09 (book)
+    TO_PROFILE = { tex = 135738,  char = "+", color = "00FF00" },  -- Spell_ChargePositive (green plus)
+    EDIT       = { tex = 136243,  char = "E", color = "FFCC00" },  -- INV_Inscription_Tradeskill01 (quill)
+}
+
+local function CreateIconBtn(parent, icon, size, tooltipTitle, tooltipDesc)
+    local s = size or 18
+    local btn = CreateFrame("Button", nil, parent)
+    btn:SetSize(s, s)
+
+    -- Icon texture (crop edges for clean look at small sizes)
+    local tex = btn:CreateTexture(nil, "ARTWORK")
+    tex:SetPoint("TOPLEFT", 1, -1)
+    tex:SetPoint("BOTTOMRIGHT", -1, 1)
+    tex:SetTexture(icon.tex)
+    tex:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+    btn._icon = tex
+
+    -- Fallback colored letter (visible if texture file missing)
+    local fs = btn:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    fs:SetPoint("CENTER", 0, 0)
+    fs:SetText("|cFF" .. icon.color .. icon.char .. "|r")
+    btn._fallbackText = fs
+
+    -- Highlight on hover
+    local hl = btn:CreateTexture(nil, "HIGHLIGHT")
+    hl:SetAllPoints()
+    hl:SetColorTexture(1, 1, 1, 0.25)
+    hl:SetBlendMode("ADD")
+
+    -- Click feedback: dim slightly on press
+    btn:SetScript("OnMouseDown", function(self) self._icon:SetAlpha(0.6) end)
+    btn:SetScript("OnMouseUp", function(self)
+        if self:IsEnabled() then self._icon:SetAlpha(1) end
+    end)
+
+    -- Disabled state
+    btn:SetScript("OnDisable", function(self)
+        self._icon:SetDesaturated(true)
+        self._icon:SetAlpha(0.35)
+        self._fallbackText:SetAlpha(0.35)
+    end)
+    btn:SetScript("OnEnable", function(self)
+        self._icon:SetDesaturated(false)
+        self._icon:SetAlpha(1)
+        self._fallbackText:SetAlpha(1)
+    end)
+
+    -- Tooltip
+    if tooltipTitle then
+        btn:SetScript("OnEnter", function(self)
+            GameTooltip:SetOwner(self, "ANCHOR_TOP")
+            GameTooltip:SetText(tooltipTitle)
+            if tooltipDesc then
+                GameTooltip:AddLine(tooltipDesc, 1, 1, 1, true)
+            end
+            GameTooltip:Show()
+        end)
+        btn:SetScript("OnLeave", GameTooltip_Hide)
+    end
+
+    return btn
+end
+
 local function CreateSectionHeader(parent, text)
     local header = parent:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     header:SetText(COLOR_YELLOW .. text .. "|r")
@@ -386,26 +458,12 @@ local function CreateProfileListRow(parent)
     marker:SetWidth(14)
     row.marker = marker
 
-    local delBtn = CreateBtn(row, "X", 20, 18)
+    local delBtn = CreateIconBtn(row, ICONS.DELETE, 18, "Delete Profile", "Remove this profile for all characters.")
     delBtn:SetPoint("RIGHT", -2, 0)
-    delBtn:SetScript("OnEnter", function(self)
-        GameTooltip:SetOwner(self, "ANCHOR_TOP")
-        GameTooltip:SetText("Delete Profile")
-        GameTooltip:AddLine("Remove this profile for all characters.", 1, 1, 1, true)
-        GameTooltip:Show()
-    end)
-    delBtn:SetScript("OnLeave", GameTooltip_Hide)
     row.delBtn = delBtn
 
-    local renBtn = CreateBtn(row, "Rename", 48, 18)
+    local renBtn = CreateIconBtn(row, ICONS.RENAME, 18, "Rename Profile", "Change this profile's name.")
     renBtn:SetPoint("RIGHT", delBtn, "LEFT", -2, 0)
-    renBtn:SetScript("OnEnter", function(self)
-        GameTooltip:SetOwner(self, "ANCHOR_TOP")
-        GameTooltip:SetText("Rename Profile")
-        GameTooltip:AddLine("Change this profile's name.", 1, 1, 1, true)
-        GameTooltip:Show()
-    end)
-    renBtn:SetScript("OnLeave", GameTooltip_Hide)
     row.renBtn = renBtn
 
     local nameText = row:CreateFontString(nil, "OVERLAY", "GameFontNormal")
@@ -447,28 +505,28 @@ local function CreateProfileLayoutRow(parent)
     bg:SetColorTexture(0.12, 0.12, 0.18, 0.3)
     row.bg = bg
 
+    local delBtn = CreateIconBtn(row, ICONS.DELETE, 18, "Remove from Profile", "Remove this layout from the profile.")
+    delBtn:SetPoint("RIGHT", -4, 0)
+    row.delBtn = delBtn
+
+    local libBtn = CreateIconBtn(row, ICONS.TO_LIBRARY, 18, "Save to Library", "Copy this layout to the template library.")
+    libBtn:SetPoint("RIGHT", delBtn, "LEFT", -2, 0)
+    row.libBtn = libBtn
+
+    local expBtn = CreateIconBtn(row, ICONS.EXPORT, 18, "Export Layout", "Copy layout string to clipboard.")
+    expBtn:SetPoint("RIGHT", libBtn, "LEFT", -2, 0)
+    row.expBtn = expBtn
+
+    local renameBtn = CreateIconBtn(row, ICONS.RENAME, 18, "Rename Layout", "Change this layout's name.")
+    renameBtn:SetPoint("RIGHT", expBtn, "LEFT", -2, 0)
+    row.renameBtn = renameBtn
+
     local nameText = row:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     nameText:SetPoint("LEFT", 8, 0)
-    nameText:SetPoint("RIGHT", -163, 0)
+    nameText:SetPoint("RIGHT", renameBtn, "LEFT", -4, 0)
     nameText:SetJustifyH("LEFT")
     nameText:SetWordWrap(false)
     row.nameText = nameText
-
-    local renameBtn = CreateBtn(row, "Rename", 48, 18)
-    renameBtn:SetPoint("RIGHT", -113, 0)
-    row.renameBtn = renameBtn
-
-    local expBtn = CreateBtn(row, "Export", 44, 18)
-    expBtn:SetPoint("RIGHT", -65, 0)
-    row.expBtn = expBtn
-
-    local libBtn = CreateBtn(row, ">Lib", 36, 18)
-    libBtn:SetPoint("RIGHT", -26, 0)
-    row.libBtn = libBtn
-
-    local delBtn = CreateBtn(row, "X", 20, 18)
-    delBtn:SetPoint("RIGHT", -4, 0)
-    row.delBtn = delBtn
 
     row:EnableMouse(true)
     row:SetScript("OnEnter", function(self) self.bg:SetColorTexture(0.18, 0.18, 0.26, 0.4) end)
@@ -500,9 +558,14 @@ local function CreateBlizzRow(parent)
     row.nameText = nameText
 
     row:EnableMouse(true)
-    row:SetScript("OnEnter", function(self) self.bg:SetColorTexture(0.2, 0.35, 0.2, 0.4) end)
+    row:SetScript("OnEnter", function(self)
+        if self.canActivate == false then return end
+        self.bg:SetColorTexture(0.2, 0.35, 0.2, 0.4)
+    end)
     row:SetScript("OnLeave", function(self)
-        if self.isActive then
+        if self.canActivate == false then
+            self.bg:SetColorTexture(0.15, 0.15, 0.15, 0.2)
+        elseif self.isActive then
             self.bg:SetColorTexture(0.15, 0.35, 0.15, 0.35)
         else
             self.bg:SetColorTexture(0.15, 0.25, 0.15, 0.3)
@@ -522,27 +585,28 @@ local function CreateTemplateRow(parent)
     bg:SetColorTexture(0.2, 0.15, 0.1, 0.3)
     row.bg = bg
 
+    local delBtn = CreateIconBtn(row, ICONS.DELETE, 18, "Delete Template", "Remove this template from the library.")
+    delBtn:SetPoint("RIGHT", -2, 0)
+    row.delBtn = delBtn
+
+    local editBtn = CreateIconBtn(row, ICONS.EDIT, 18, "Edit Template", "Edit template name, class, and spec.")
+    editBtn:SetPoint("RIGHT", delBtn, "LEFT", -2, 0)
+    row.editBtn = editBtn
+
+    local expBtn = CreateIconBtn(row, ICONS.EXPORT, 18, "Export Template", "Copy template string to clipboard.")
+    expBtn:SetPoint("RIGHT", editBtn, "LEFT", -2, 0)
+    row.expBtn = expBtn
+
+    local profBtn = CreateIconBtn(row, ICONS.TO_PROFILE, 18, "Add to Profile", "Add this template to the selected profile.")
+    profBtn:SetPoint("RIGHT", expBtn, "LEFT", -2, 0)
+    row.profBtn = profBtn
+
     local nameText = row:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     nameText:SetPoint("LEFT", 8, 0)
-    nameText:SetPoint("RIGHT", -150, 0)
+    nameText:SetPoint("RIGHT", profBtn, "LEFT", -4, 0)
     nameText:SetJustifyH("LEFT")
     nameText:SetWordWrap(false)
     row.nameText = nameText
-
-    local profBtn = CreateBtn(row, ">Prof", 40, 18)
-    profBtn:SetPoint("RIGHT", -106, 0)
-    row.profBtn = profBtn
-
-    local expBtn = CreateBtn(row, "Export", 44, 18)
-    expBtn:SetPoint("RIGHT", -58, 0)
-    row.expBtn = expBtn
-
-    local editBtn = CreateBtn(row, "Edit", 32, 18)
-    editBtn:SetPoint("RIGHT", -22, 0)
-    row.editBtn = editBtn
-
-    local delBtn = CreateBtn(row, "X", 18, 18)
-    delBtn:SetPoint("RIGHT", -2, 0)
     row.delBtn = delBtn
 
     row:EnableMouse(true)
@@ -568,7 +632,7 @@ local function RefreshAll() end  -- forward declare
 local function CreateMainFrame()
     if mainFrame then return mainFrame end
 
-    mainFrame = CreateBackdropFrame("CooldownMasterFrame", UIParent, DEFAULT_WIDTH, DEFAULT_HEIGHT)
+    mainFrame = CreateBackdropFrame("CooldownManagerProfilesFrame", UIParent, DEFAULT_WIDTH, DEFAULT_HEIGHT)
     mainFrame:SetPoint("CENTER")
     mainFrame:SetMovable(true)
     mainFrame:EnableMouse(true)
@@ -579,12 +643,12 @@ local function CreateMainFrame()
     mainFrame:SetFrameStrata("DIALOG")
     mainFrame:Hide()
 
-    table.insert(UISpecialFrames, "CooldownMasterFrame")
+    table.insert(UISpecialFrames, "CooldownManagerProfilesFrame")
 
     -- Title
     local title = mainFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     title:SetPoint("TOP", 0, -14)
-    title:SetText(COLOR_TITLE .. "CooldownMaster|r")
+    title:SetText(COLOR_TITLE .. "Cooldown Manager Profiles|r")
 
     -- Close
     local closeBtn = CreateFrame("Button", nil, mainFrame, "UIPanelCloseButton")
@@ -833,7 +897,7 @@ local function CreateMainFrame()
     importCDMBtn:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_TOP")
         GameTooltip:SetText("Import CDM String")
-        GameTooltip:AddLine("Import a CDM layout string or\nCooldownMaster export as a template.", 1, 1, 1, true)
+        GameTooltip:AddLine("Import a CDM layout string or\nCM Profiles export as a template.", 1, 1, 1, true)
         GameTooltip:Show()
     end)
     importCDMBtn:SetScript("OnLeave", GameTooltip_Hide)
@@ -1232,16 +1296,19 @@ local function RefreshBlizzardSection()
     ReleasePool("blizzRows")
 
     local layouts = ns.GetBlizzardLayouts()
-    local count = #layouts
+    local userCount = 0
+    for _, l in ipairs(layouts) do
+        if not l.isDefault then userCount = userCount + 1 end
+    end
 
-    center.blizzHeader:SetText(COLOR_YELLOW .. "Blizzard Layouts (" .. count .. "/5)|r")
+    center.blizzHeader:SetText(COLOR_YELLOW .. "Blizzard Layouts (" .. userCount .. "/5)|r")
     center.blizzSlotInfo:SetText(
         ns.HasFreeBlizzardSlot()
-            and (COLOR_GREEN .. (5 - count) .. " free|r")
+            and (COLOR_GREEN .. (5 - userCount) .. " free|r")
             or (COLOR_RED .. "Full|r")
     )
 
-    if count == 0 then
+    if #layouts == 0 then
         mainFrame.blizzContent:SetHeight(20)
         return
     end
@@ -1262,18 +1329,42 @@ local function RefreshBlizzardSection()
             row:SetPoint("TOPLEFT", 0, yOff)
             row:SetPoint("TOPRIGHT", 0, yOff)
 
+            local canActivate = l.canActivate ~= false
             row.nameText:SetText(l.name)
             row.isActive = l.isActive
+            row.canActivate = canActivate
 
             if l.isActive then
                 row.marker:SetText(COLOR_GREEN .. ">|r")
                 row.bg:SetColorTexture(0.15, 0.35, 0.15, 0.35)
                 row.nameText:SetTextColor(0.2, 0.9, 0.2)
+            elseif not canActivate then
+                row.marker:SetText("")
+                row.bg:SetColorTexture(0.15, 0.15, 0.15, 0.2)
+                row.nameText:SetTextColor(0.4, 0.4, 0.4)
             else
                 row.marker:SetText("")
                 row.bg:SetColorTexture(0.15, 0.25, 0.15, 0.3)
                 row.nameText:SetTextColor(0.9, 0.9, 0.9)
             end
+
+            local layoutID = l.id
+            local specTag = l.specTag
+            row:SetScript("OnMouseUp", function(_, button)
+                if button == "LeftButton" then
+                    if not canActivate then
+                        local spec = ns.SpecFromSpecTag(specTag) or specTag
+                        ns.Print("|cFF888888Cannot switch: layout belongs to " .. spec .. " spec.|r")
+                        return
+                    end
+                    local ok, err = ns.ActivateBlizzardLayout(layoutID)
+                    if ok then
+                        RefreshAll()
+                    else
+                        ns.Print("|cFFFF0000" .. (err or "Failed to switch layout.") .. "|r")
+                    end
+                end
+            end)
 
             yOff = yOff - ROW_HEIGHT
         end
@@ -1445,7 +1536,7 @@ local exportStringFrame
 
 function ns.ShowExportStringWindow(str, title)
     if not exportStringFrame then
-        exportStringFrame = CreateBackdropFrame("CooldownMasterExportStringFrame", UIParent, 460, 300)
+        exportStringFrame = CreateBackdropFrame("CooldownManagerProfilesExportFrame", UIParent, 460, 300)
         exportStringFrame:SetPoint("CENTER", 220, 0)
         exportStringFrame:SetMovable(true)
         exportStringFrame:EnableMouse(true)
@@ -1456,7 +1547,7 @@ function ns.ShowExportStringWindow(str, title)
         exportStringFrame:SetFrameStrata("FULLSCREEN_DIALOG")
         exportStringFrame:Hide()
 
-        table.insert(UISpecialFrames, "CooldownMasterExportStringFrame")
+        table.insert(UISpecialFrames, "CooldownManagerProfilesExportFrame")
 
         exportStringFrame.titleText = exportStringFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
         exportStringFrame.titleText:SetPoint("TOP", 0, -14)
@@ -1543,7 +1634,7 @@ end
 
 function ns.ShowImportWindow()
     if not importFrame then
-        importFrame = CreateBackdropFrame("CooldownMasterImportFrame", UIParent, 480, 452)
+        importFrame = CreateBackdropFrame("CooldownManagerProfilesImportFrame", UIParent, 480, 452)
         importFrame:SetPoint("CENTER", -220, 0)
         importFrame:SetMovable(true)
         importFrame:EnableMouse(true)
@@ -1554,7 +1645,7 @@ function ns.ShowImportWindow()
         importFrame:SetFrameStrata("FULLSCREEN_DIALOG")
         importFrame:Hide()
 
-        table.insert(UISpecialFrames, "CooldownMasterImportFrame")
+        table.insert(UISpecialFrames, "CooldownManagerProfilesImportFrame")
 
         local title = importFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
         title:SetPoint("TOP", 0, -14)
@@ -1918,7 +2009,7 @@ function ns.ShowEditTemplateWindow(uuid)
     end
 
     if not editTmplFrame then
-        editTmplFrame = CreateBackdropFrame("CooldownMasterEditTmplFrame", UIParent, 480, 420)
+        editTmplFrame = CreateBackdropFrame("CooldownManagerProfilesEditTmplFrame", UIParent, 480, 420)
         editTmplFrame:SetPoint("CENTER", 220, 0)
         editTmplFrame:SetMovable(true)
         editTmplFrame:EnableMouse(true)
@@ -1929,7 +2020,7 @@ function ns.ShowEditTemplateWindow(uuid)
         editTmplFrame:SetFrameStrata("FULLSCREEN_DIALOG")
         editTmplFrame:Hide()
 
-        table.insert(UISpecialFrames, "CooldownMasterEditTmplFrame")
+        table.insert(UISpecialFrames, "CooldownManagerProfilesEditTmplFrame")
 
         local title = editTmplFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
         title:SetPoint("TOP", 0, -14)

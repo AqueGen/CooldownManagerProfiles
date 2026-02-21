@@ -1,6 +1,6 @@
 local addonName, ns = ...
 
-ns.ADDON_NAME = "CooldownMaster"
+ns.ADDON_NAME = "Cooldown Manager Profiles"
 ns.VERSION = "2.0.0"
 ns.PREFIX_COLOR = "|cFF00CCFF"
 ns.DB_VERSION = 4
@@ -97,7 +97,7 @@ end
 ---------------------------------------------------------------------------
 
 --[[
-CooldownMasterDB = {
+CooldownManagerProfilesDB = {
     version = 4,
 
     -- v4: Global Template Library (account-wide, individual layouts)
@@ -175,8 +175,16 @@ function ns.SpecFromSpecTag(specTag)
 end
 
 function ns.InitDB()
-    if not CooldownMasterDB then CooldownMasterDB = {} end
-    local db = CooldownMasterDB
+    -- Migrate from old CooldownMasterDB if it has data
+    if CooldownMasterDB and next(CooldownMasterDB) then
+        if not CooldownManagerProfilesDB or not next(CooldownManagerProfilesDB) then
+            CooldownManagerProfilesDB = CooldownMasterDB
+        end
+        CooldownMasterDB = nil
+    end
+
+    if not CooldownManagerProfilesDB then CooldownManagerProfilesDB = {} end
+    local db = CooldownManagerProfilesDB
 
     db.version = ns.DB_VERSION
 
@@ -301,10 +309,10 @@ end
 -- Slash Commands
 ---------------------------------------------------------------------------
 
-SLASH_COOLDOWNMASTER1 = "/cm"
-SLASH_COOLDOWNMASTER2 = "/cooldownmaster"
+SLASH_COOLDOWNMANAGERPROFILES1 = "/cm"
+SLASH_COOLDOWNMANAGERPROFILES2 = "/cmp"
 
-SlashCmdList["COOLDOWNMASTER"] = function(msg)
+SlashCmdList["COOLDOWNMANAGERPROFILES"] = function(msg)
     msg = msg or ""
     local cmd, arg = msg:match("^(%S+)%s*(.*)")
     if not cmd then ns.ToggleUI(); return end
@@ -343,6 +351,18 @@ SlashCmdList["COOLDOWNMASTER"] = function(msg)
         print("  /cm export       - Open export window")
         print("  /cm settings     - Open addon settings (ESC panel)")
         print("  /cm help         - Show this help")
+    elseif cmd == "debug-viewer" then
+        local v = _G["EssentialCooldownViewer"]
+        if not v then ns.Print("No EssentialCooldownViewer"); return end
+        local methods = {}
+        for k, val in pairs(v) do
+            if type(val) == "function" then
+                methods[#methods + 1] = k
+            end
+        end
+        table.sort(methods)
+        ns.Print("EssentialCooldownViewer functions (" .. #methods .. "):")
+        for _, m in ipairs(methods) do print("  " .. m) end
     else
         ns.Print("Unknown command. Type /cm help")
     end
