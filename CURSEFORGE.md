@@ -31,7 +31,6 @@ Share your entire profile, a single class setup, or an individual layout with fr
 - **Load to Blizzard**: Push profile layouts back into the Cooldown Manager instantly
 
 **Quality of Life**
-- Auto-switch profiles on spec change
 - Minimap button (left-click to open, right-click for settings)
 - Resizable three-column UI
 - Inline rename and delete on every row
