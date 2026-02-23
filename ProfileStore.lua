@@ -90,8 +90,9 @@ function ns.LoadProfile(name)
 
     C_CooldownViewer.SetLayoutData(profile.data)
     ns.db.activeProfile[ns.charKey] = name
-    ns.RefreshViewers()
-    if ns.RefreshUI then ns.RefreshUI() end
+    -- Clear stale name overrides (new blob has its own layout IDs)
+    ns.db.layoutNameOverrides[ns.charKey] = {}
+    StaticPopup_Show("COOLDOWNMASTER_RELOAD_UI")
     return true
 end
 
@@ -184,14 +185,9 @@ function ns.GetBlizzardLayouts()
             if CooldownManagerLayout_IsDefaultLayout then
                 isDef = CooldownManagerLayout_IsDefaultLayout(layout) or false
             end
-            local canActivate = true
-            if lm.CanActivateLayout then
-                local cOk, can = pcall(lm.CanActivateLayout, lm, layout)
-                if cOk then canActivate = can end
-            end
             layouts[#layouts + 1] = {
                 id = layoutID, name = name, specTag = specTag, isDefault = isDef,
-                class = ns.GetClassToken(), canActivate = canActivate,
+                class = ns.GetClassToken(),
             }
         end
     end)
@@ -205,69 +201,7 @@ function ns.GetBlizzardLayouts()
             if overrides[l.id] then l.name = overrides[l.id] end
         end
     end
-    local activeOk, activeID = pcall(lm.GetActiveLayoutID, lm)
-    if activeOk and activeID then
-        for _, l in ipairs(layouts) do
-            l.isActive = (l.id == activeID)
-        end
-    end
-    -- Append Starter Layout (Blizzard default) at the end
-    if lm.GetDefaultLayoutID then
-        local defOk, defID = pcall(lm.GetDefaultLayoutID, lm)
-        if defOk and defID then
-            local alreadyListed = false
-            for _, l in ipairs(layouts) do
-                if l.id == defID then alreadyListed = true; break end
-            end
-            if not alreadyListed then
-                local isActive = (activeOk and activeID == defID)
-                if not isActive and lm.IsUsingDefaultLayout then
-                    local uOk, uDef = pcall(lm.IsUsingDefaultLayout, lm)
-                    if uOk then isActive = uDef end
-                end
-                layouts[#layouts + 1] = {
-                    id = defID, name = "Starter Layout", specTag = "",
-                    isDefault = true, class = ns.GetClassToken(),
-                    isActive = isActive, canActivate = true,
-                }
-            end
-        end
-    end
     return layouts
-end
-
-function ns.ActivateBlizzardLayout(layoutID)
-    if InCombatLockdown() then return false, "Cannot switch layouts in combat." end
-    local lm = ns.GetLayoutManager()
-    if not lm then return false, "Layout manager not available." end
-    local isDefault = lm.IsDefaultLayoutID and pcall(lm.IsDefaultLayoutID, lm, layoutID)
-        and lm:IsDefaultLayoutID(layoutID)
-    -- Try Blizzard's high-level API first (handles save, dirty-mark, notify)
-    if not isDefault and CooldownViewerSettings
-        and CooldownViewerSettings.SetActiveLayoutByID then
-        local ok = pcall(CooldownViewerSettings.SetActiveLayoutByID,
-                         CooldownViewerSettings, layoutID)
-        if ok then return true end
-    end
-    -- Fallback: direct LayoutManager calls + manual event trigger
-    if isDefault then
-        if not lm.UseDefaultLayout then return false, "UseDefaultLayout not supported." end
-        local ok, err = pcall(lm.UseDefaultLayout, lm)
-        if not ok then return false, tostring(err) end
-    else
-        if not lm.SetActiveLayoutByID then return false, "SetActiveLayoutByID not supported." end
-        local ok, err = pcall(lm.SetActiveLayoutByID, lm, layoutID)
-        if not ok then return false, tostring(err) end
-    end
-    if lm.SaveLayouts then pcall(lm.SaveLayouts, lm) end
-    if lm.NotifyListeners then pcall(lm.NotifyListeners, lm) end
-    -- Fire the event CDM viewers listen for to refresh their display
-    if EventRegistry and EventRegistry.TriggerEvent then
-        pcall(EventRegistry.TriggerEvent, EventRegistry,
-              "CooldownViewerSettings.OnDataChanged")
-    end
-    ns.RefreshViewers()
-    return true
 end
 
 function ns.GetBlizzardLayoutCount()
@@ -294,237 +228,6 @@ function ns.HasFreeBlizzardSlot()
     return ns.GetBlizzardLayoutCount() < 5
 end
 
----------------------------------------------------------------------------
--- STORED LAYOUTS (unattached, not in any profile, not in Blizzard)
----------------------------------------------------------------------------
-
-function ns.GetStoredLayouts()
-    if not ns.charKey then return {} end
-    ns.EnsureCharTables()
-    return ns.db.storedLayouts[ns.charKey]
-end
-
---- Move a Blizzard layout to unattached storage (frees a Blizzard slot)
-function ns.StoreBlizzardLayout(layoutID)
-    local lm = ns.GetLayoutManager()
-    if not lm then return false, "Layout manager not available." end
-    if InCombatLockdown() then return false, "In combat." end
-
-    -- Try to get layout info and serialize it
-    local ok, layout = pcall(lm.GetLayout, lm, layoutID)
-    if not ok or not layout then return false, "Layout not found." end
-
-    local name = "Layout " .. layoutID
-    local specTag = ""
-    if CooldownManagerLayout_GetName then
-        pcall(function() name = CooldownManagerLayout_GetName(layout) or name end)
-    end
-    if CooldownManagerLayout_GetClassAndSpecTag then
-        pcall(function()
-            local raw = CooldownManagerLayout_GetClassAndSpecTag(layout)
-            specTag = raw and tostring(raw) or ""
-        end)
-    end
-
-    -- Try to serialize individual layout
-    local data
-    if lm.GetSerializer then
-        local serOk, serializer = pcall(lm.GetSerializer, lm)
-        if serOk and serializer and serializer.SerializeLayouts then
-            local dataOk, result = pcall(serializer.SerializeLayouts, serializer, layoutID)
-            if dataOk then data = result end
-        end
-    end
-    if not data or data == "" then return false, "Serialize failed. LayoutManager API may not support this." end
-
-    ns.EnsureCharTables()
-    local stored = ns.db.storedLayouts[ns.charKey]
-    stored[#stored + 1] = {
-        name = name, specTag = specTag, data = data,
-        created = time(), modified = time(),
-    }
-
-    pcall(lm.RemoveLayout, lm, layoutID)
-
-    ns.AutoSaveActiveProfile()
-    ns.RefreshViewers()
-    if ns.RefreshUI then ns.RefreshUI() end
-    return true
-end
-
---- Copy a Blizzard layout to storage (keeps original in Blizzard)
-function ns.CopyBlizzardLayout(layoutID)
-    local lm = ns.GetLayoutManager()
-    if not lm then return false, "Layout manager not available." end
-
-    local ok, layout = pcall(lm.GetLayout, lm, layoutID)
-    if not ok or not layout then return false, "Layout not found." end
-
-    local name = "Layout " .. layoutID
-    local specTag = ""
-    if CooldownManagerLayout_GetName then
-        pcall(function() name = CooldownManagerLayout_GetName(layout) or name end)
-    end
-    if CooldownManagerLayout_GetClassAndSpecTag then
-        pcall(function()
-            local raw = CooldownManagerLayout_GetClassAndSpecTag(layout)
-            specTag = raw and tostring(raw) or ""
-        end)
-    end
-
-    local data
-    if lm.GetSerializer then
-        local serOk, serializer = pcall(lm.GetSerializer, lm)
-        if serOk and serializer and serializer.SerializeLayouts then
-            local dataOk, result = pcall(serializer.SerializeLayouts, serializer, layoutID)
-            if dataOk then data = result end
-        end
-    end
-    if not data or data == "" then return false, "Serialize failed." end
-
-    ns.EnsureCharTables()
-    local stored = ns.db.storedLayouts[ns.charKey]
-    stored[#stored + 1] = {
-        name = name, specTag = specTag, data = data,
-        created = time(), modified = time(),
-    }
-
-    if ns.RefreshUI then ns.RefreshUI() end
-    return true
-end
-
---- Delete a Blizzard layout without storing it
-function ns.DeleteBlizzardLayout(layoutID)
-    local lm = ns.GetLayoutManager()
-    if not lm then return false, "Layout manager not available." end
-    if InCombatLockdown() then return false, "In combat." end
-
-    local ok, layout = pcall(lm.GetLayout, lm, layoutID)
-    if not ok or not layout then return false, "Layout not found." end
-
-    pcall(lm.RemoveLayout, lm, layoutID)
-
-    ns.AutoSaveActiveProfile()
-    ns.RefreshViewers()
-    if ns.RefreshUI then ns.RefreshUI() end
-    return true
-end
-
---- Rename a Blizzard layout (local override + Blizzard API if available)
-function ns.RenameBlizzardLayout(layoutID, newName)
-    if not newName or newName == "" then return false, "Empty name." end
-    if #newName > 50 then return false, "Name too long (max 50)." end
-    if not ns.charKey then return false, "Character not ready." end
-
-    local lm = ns.GetLayoutManager()
-    if not lm then return false, "Layout manager not available." end
-
-    local ok, layout = pcall(lm.GetLayout, lm, layoutID)
-    if not ok or not layout then return false, "Layout not found." end
-
-    -- Try Blizzard API if available
-    if CooldownManagerLayout_SetName then
-        pcall(CooldownManagerLayout_SetName, layout, newName)
-    end
-
-    -- Always store local override as fallback
-    ns.EnsureCharTables()
-    ns.db.layoutNameOverrides[ns.charKey][layoutID] = newName
-
-    ns.AutoSaveActiveProfile()
-    if ns.RefreshUI then ns.RefreshUI() end
-    return true
-end
-
---- Move a stored layout into Blizzard (needs free slot)
-function ns.ActivateStoredLayout(index)
-    local lm = ns.GetLayoutManager()
-    if not lm then return false, "Layout manager not available." end
-    if InCombatLockdown() then return false, "In combat." end
-    if not ns.dataLoaded then return false, "CDM not loaded." end
-    if not ns.HasFreeBlizzardSlot() then
-        return false, "No free Blizzard slots (5/5). Store one first."
-    end
-
-    ns.EnsureCharTables()
-    local stored = ns.db.storedLayouts[ns.charKey]
-    local entry = stored[index]
-    if not entry then return false, "Stored layout #" .. index .. " not found." end
-    if not entry.data or entry.data == "" then return false, "No data." end
-
-    if not lm.CreateLayoutsFromSerializedData then
-        return false, "LayoutManager does not support CreateLayoutsFromSerializedData."
-    end
-
-    local ok, result = pcall(lm.CreateLayoutsFromSerializedData, lm, entry.data)
-    if not ok or not result then return false, "Import failed: " .. tostring(result or "unknown") end
-
-    table.remove(stored, index)
-
-    ns.AutoSaveActiveProfile()
-    ns.RefreshViewers()
-    if ns.RefreshUI then ns.RefreshUI() end
-    return true
-end
-
---- Import a CDM string to unattached storage
-function ns.ImportCDMString(cdmString, customName)
-    if not cdmString or cdmString == "" then return false, "Empty string." end
-    cdmString = cdmString:match("^%s*(.-)%s*$")
-    if not cdmString:match("^%d+|") then
-        return false, "Not a valid CDM string."
-    end
-    ns.EnsureCharTables()
-    local stored = ns.db.storedLayouts[ns.charKey]
-    stored[#stored + 1] = {
-        name = customName or "Imported", specTag = "", data = cdmString,
-        created = time(), modified = time(),
-    }
-    if ns.RefreshUI then ns.RefreshUI() end
-    return true
-end
-
---- Import a CDM string directly into Blizzard (active profile)
-function ns.ImportCDMToBlizzard(cdmString)
-    local lm = ns.GetLayoutManager()
-    if not lm then return false, "Layout manager not available." end
-    if InCombatLockdown() then return false, "In combat." end
-    if not ns.HasFreeBlizzardSlot() then return false, "No free slots (5/5)." end
-
-    if not lm.CreateLayoutsFromSerializedData then
-        return false, "LayoutManager does not support this operation."
-    end
-
-    local ok, result = pcall(lm.CreateLayoutsFromSerializedData, lm, cdmString)
-    if not ok or not result then return false, "Import failed." end
-
-    ns.AutoSaveActiveProfile()
-    ns.RefreshViewers()
-    if ns.RefreshUI then ns.RefreshUI() end
-    return true
-end
-
---- Delete a stored layout
-function ns.DeleteStoredLayout(index)
-    ns.EnsureCharTables()
-    local stored = ns.db.storedLayouts[ns.charKey]
-    if not stored[index] then return false, "Not found." end
-    table.remove(stored, index)
-    if ns.RefreshUI then ns.RefreshUI() end
-    return true
-end
-
---- Rename a stored layout
-function ns.RenameStoredLayout(index, newName)
-    if not newName or newName == "" then return false, "Empty name." end
-    ns.EnsureCharTables()
-    local stored = ns.db.storedLayouts[ns.charKey]
-    if not stored[index] then return false, "Not found." end
-    stored[index].name = newName
-    stored[index].modified = time()
-    if ns.RefreshUI then ns.RefreshUI() end
-    return true
-end
 
 ---------------------------------------------------------------------------
 -- Sync: capture current Blizzard state into active profile
@@ -574,13 +277,6 @@ function ns.ExportBlizzardLayout(layoutID)
     local dataOk, data = pcall(serializer.SerializeLayouts, serializer, layoutID)
     if not dataOk or not data or data == "" then return nil, "Serialize failed." end
     return data
-end
-
-function ns.ExportStoredLayout(index)
-    ns.EnsureCharTables()
-    local entry = ns.db.storedLayouts[ns.charKey][index]
-    if not entry then return nil, "Not found." end
-    return entry.data
 end
 
 function ns.ExportActiveProfile()
@@ -954,6 +650,10 @@ function ns.LoadGlobalProfile(profileUUID)
     -- Auto-save current state into active profile before switching
     if ns.AutoSaveActiveProfile then ns.AutoSaveActiveProfile() end
 
+    -- Clear stale name overrides before replacing layouts
+    ns.EnsureCharTables()
+    ns.db.layoutNameOverrides[ns.charKey] = {}
+
     -- Remove all existing Blizzard layouts
     local existingLayouts = ns.GetBlizzardLayouts()
     for i = #existingLayouts, 1, -1 do
@@ -1001,9 +701,12 @@ function ns.LoadGlobalProfile(profileUUID)
         return false, "Failed to load any layouts. Data may be incompatible."
     end
 
+    -- Persist Lua LayoutManager state to C level before reload
+    pcall(lm.SaveLayouts, lm)
+
     ns.SetActiveGlobalProfileUUID(profileUUID)
-    ns.RefreshViewers()
     if ns.RefreshUI then ns.RefreshUI() end
+    StaticPopup_Show("COOLDOWNMASTER_RELOAD_UI")
     return true, loaded .. " layout(s) loaded for " .. classToken .. "."
 end
 
@@ -1076,46 +779,22 @@ function ns.PrintAll()
         print("  (none)")
     else
         for _, l in ipairs(blizz) do
-            local m = l.isActive and " |cFF00FF00(active)|r" or ""
-            print(string.format("  [%d] %s |cFF888888(%s)|r%s", l.id, l.name, l.specTag, m))
+            print(string.format("  [%d] %s |cFF888888(%s)|r", l.id, l.name, l.specTag))
         end
     end
 
-    ns.Print("=== Stored Layouts (unattached) ===")
-    local stored = ns.GetStoredLayouts()
-    if #stored == 0 then
-        print("  (none)")
-    else
-        for i, s in ipairs(stored) do
-            print(string.format("  #%d: %s |cFF888888(%s)|r", i, s.name, s.specTag ~= "" and s.specTag or "?"))
-        end
-    end
-end
-
----------------------------------------------------------------------------
--- Viewer Refresh
----------------------------------------------------------------------------
-
-function ns.RefreshViewers()
-    C_Timer.After(0.1, function()
-        for _, name in ipairs({
-            "EssentialCooldownViewer", "UtilityCooldownViewer",
-            "BuffIconCooldownViewer", "TrackedBarCooldownViewer",
-        }) do
-            local v = _G[name]
-            if v then
-                if v.CacheLayoutSettings then pcall(v.CacheLayoutSettings, v) end
-                if v.UpdateSystem then pcall(v.UpdateSystem, v) end
-                if v.RefreshData then pcall(v.RefreshData, v) end
-                if v.RefreshLayout then pcall(v.RefreshLayout, v) end
-            end
-        end
-    end)
 end
 
 ---------------------------------------------------------------------------
 -- StaticPopup Dialogs
 ---------------------------------------------------------------------------
+
+StaticPopupDialogs["COOLDOWNMASTER_RELOAD_UI"] = {
+    text = "CM Profiles\n\nProfile loaded successfully.\nUI reload is required to apply layout changes.\n\n|cFF888888Blizzard's Cooldown Manager does not support live layout updates from addons. This workaround may be improved in future versions.|r",
+    button1 = "Reload Now", button2 = "Later",
+    timeout = 0, whileDead = true, hideOnEscape = true,
+    OnAccept = function() ReloadUI() end,
+}
 
 StaticPopupDialogs["COOLDOWNMASTER_SAVE_PROFILE"] = {
     text = "CM Profiles\nSave current state as profile:",
@@ -1194,119 +873,6 @@ StaticPopupDialogs["COOLDOWNMASTER_RENAME_PROFILE"] = {
     EditBoxOnEnterPressed = function(self)
         local p = self:GetParent()
         StaticPopupDialogs["COOLDOWNMASTER_RENAME_PROFILE"].OnAccept(p, p.data)
-        p:Hide()
-    end,
-    EditBoxOnEscapePressed = function(self) self:GetParent():Hide() end,
-}
-
-StaticPopupDialogs["COOLDOWNMASTER_STORE_CONFIRM"] = {
-    text = "CM Profiles\nStore '%s' to unattached and free a Blizzard slot?",
-    button1 = "Store", button2 = "Cancel",
-    timeout = 0, whileDead = true, hideOnEscape = true,
-    OnAccept = function(self, data)
-        if not data then return end
-        local ok, err = ns.StoreBlizzardLayout(data.layoutID)
-        ns.Print(ok and "Stored." or ("|cFFFF0000Error:|r " .. err))
-    end,
-}
-
-StaticPopupDialogs["COOLDOWNMASTER_COPY_BLIZZARD"] = {
-    text = "CM Profiles\nCopy layout '%s' to storage?",
-    button1 = "Copy", button2 = "Cancel",
-    timeout = 0, whileDead = true, hideOnEscape = true,
-    OnAccept = function(self, data)
-        if not data then return end
-        local ok, err = ns.CopyBlizzardLayout(data.layoutID)
-        ns.Print(ok and "Copied to storage." or ("|cFFFF0000Error:|r " .. err))
-    end,
-}
-
-StaticPopupDialogs["COOLDOWNMASTER_DELETE_BLIZZARD"] = {
-    text = "CM Profiles\nDelete Blizzard layout '%s'?\nThis cannot be undone.",
-    button1 = "Delete", button2 = "Cancel",
-    timeout = 0, whileDead = true, hideOnEscape = true, showAlert = true,
-    OnAccept = function(self, data)
-        if not data then return end
-        local ok, err = ns.DeleteBlizzardLayout(data.layoutID)
-        ns.Print(ok and "Deleted." or ("|cFFFF0000Error:|r " .. err))
-    end,
-}
-
-StaticPopupDialogs["COOLDOWNMASTER_RENAME_BLIZZARD"] = {
-    text = "CM Profiles\nRename Blizzard layout '%s':",
-    button1 = "Rename", button2 = "Cancel",
-    hasEditBox = true, timeout = 0, whileDead = true, hideOnEscape = true,
-    OnShow = function(self, data)
-        self.EditBox:SetText(data and data.oldName or "")
-        self.EditBox:HighlightText(); self.EditBox:SetFocus()
-    end,
-    OnAccept = function(self, data)
-        if not data then return end
-        local n = (self.EditBox:GetText() or ""):match("^%s*(.-)%s*$")
-        if n == "" then return end
-        local ok, err = ns.RenameBlizzardLayout(data.layoutID, n)
-        ns.Print(ok and ("Renamed: " .. n) or ("|cFFFF0000Error:|r " .. err))
-    end,
-    EditBoxOnEnterPressed = function(self)
-        local p = self:GetParent()
-        StaticPopupDialogs["COOLDOWNMASTER_RENAME_BLIZZARD"].OnAccept(p, p.data)
-        p:Hide()
-    end,
-    EditBoxOnEscapePressed = function(self) self:GetParent():Hide() end,
-}
-
-StaticPopupDialogs["COOLDOWNMASTER_DELETE_STORED"] = {
-    text = "CM Profiles\nDelete stored layout '%s'?",
-    button1 = "Delete", button2 = "Cancel",
-    timeout = 0, whileDead = true, hideOnEscape = true, showAlert = true,
-    OnAccept = function(self, data)
-        if not data then return end
-        local ok, err = ns.DeleteStoredLayout(data.index)
-        ns.Print(ok and "Deleted." or ("|cFFFF0000Error:|r " .. err))
-    end,
-}
-
-StaticPopupDialogs["COOLDOWNMASTER_RENAME_STORED"] = {
-    text = "CM Profiles\nRename stored layout '%s':",
-    button1 = "Rename", button2 = "Cancel",
-    hasEditBox = true, timeout = 0, whileDead = true, hideOnEscape = true,
-    OnShow = function(self, data)
-        self.EditBox:SetText(data and data.oldName or "")
-        self.EditBox:HighlightText(); self.EditBox:SetFocus()
-    end,
-    OnAccept = function(self, data)
-        if not data then return end
-        local n = (self.EditBox:GetText() or ""):match("^%s*(.-)%s*$")
-        if n == "" then return end
-        local ok, err = ns.RenameStoredLayout(data.index, n)
-        ns.Print(ok and ("Renamed: " .. n) or ("|cFFFF0000Error:|r " .. err))
-    end,
-    EditBoxOnEnterPressed = function(self)
-        local p = self:GetParent()
-        StaticPopupDialogs["COOLDOWNMASTER_RENAME_STORED"].OnAccept(p, p.data)
-        p:Hide()
-    end,
-    EditBoxOnEscapePressed = function(self) self:GetParent():Hide() end,
-}
-
-StaticPopupDialogs["COOLDOWNMASTER_IMPORT_CDM_NAME"] = {
-    text = "CM Profiles\nName for imported layout:",
-    button1 = "Import", button2 = "Cancel",
-    hasEditBox = true, timeout = 0, whileDead = true, hideOnEscape = true,
-    OnShow = function(self)
-        self.EditBox:SetText("Imported")
-        self.EditBox:HighlightText(); self.EditBox:SetFocus()
-    end,
-    OnAccept = function(self, data)
-        if not data then return end
-        local name = (self.EditBox:GetText() or ""):match("^%s*(.-)%s*$")
-        if name == "" then name = "Imported" end
-        local ok, err = ns.ImportCDMString(data.cdmString, name)
-        ns.Print(ok and ("Imported: " .. name) or ("|cFFFF0000Error:|r " .. err))
-    end,
-    EditBoxOnEnterPressed = function(self)
-        local p = self:GetParent()
-        StaticPopupDialogs["COOLDOWNMASTER_IMPORT_CDM_NAME"].OnAccept(p, p.data)
         p:Hide()
     end,
     EditBoxOnEscapePressed = function(self) self:GetParent():Hide() end,

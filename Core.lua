@@ -131,11 +131,6 @@ CooldownManagerProfilesDB = {
         }
     },
     activeProfile = { ["Char-Realm"] = "Luxthos" },
-    storedLayouts = {
-        ["Char-Realm"] = {
-            { name = "Arena Burst", specTag = "MageArcane", data = "1|...", created = N, modified = N },
-        }
-    },
 
     settings = {},
 }
@@ -191,7 +186,6 @@ function ns.InitDB()
     -- Ensure all tables exist
     if not db.profiles then db.profiles = {} end
     if not db.activeProfile then db.activeProfile = {} end
-    if not db.storedLayouts then db.storedLayouts = {} end
     if not db.layoutNameOverrides then db.layoutNameOverrides = {} end
     if not db.templateLibrary then db.templateLibrary = {} end
     if not db.globalProfiles then db.globalProfiles = {} end
@@ -209,7 +203,6 @@ function ns.EnsureCharTables(charKey)
     charKey = charKey or ns.charKey
     if not charKey then return end
     if not ns.db.profiles[charKey] then ns.db.profiles[charKey] = {} end
-    if not ns.db.storedLayouts[charKey] then ns.db.storedLayouts[charKey] = {} end
     if not ns.db.layoutNameOverrides[charKey] then ns.db.layoutNameOverrides[charKey] = {} end
     if not ns.db.characters[charKey] then ns.db.characters[charKey] = {} end
 end
@@ -346,7 +339,7 @@ SlashCmdList["COOLDOWNMANAGERPROFILES"] = function(msg)
         print("  /cm              - Toggle UI")
         print("  /cm save <name>  - Save current Blizzard state as profile")
         print("  /cm load <name>  - Load a profile (replaces Blizzard layouts)")
-        print("  /cm list         - List all profiles and stored layouts")
+        print("  /cm list         - List all profiles")
         print("  /cm import       - Open import window")
         print("  /cm export       - Open export window")
         print("  /cm settings     - Open addon settings (ESC panel)")

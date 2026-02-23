@@ -527,20 +527,7 @@ local function CreateBlizzRow(parent)
     nameText:SetWordWrap(false)
     row.nameText = nameText
 
-    row:EnableMouse(true)
-    row:SetScript("OnEnter", function(self)
-        if self.canActivate == false then return end
-        self.bg:SetColorTexture(0.2, 0.35, 0.2, 0.4)
-    end)
-    row:SetScript("OnLeave", function(self)
-        if self.canActivate == false then
-            self.bg:SetColorTexture(0.15, 0.15, 0.15, 0.2)
-        elseif self.isActive then
-            self.bg:SetColorTexture(0.15, 0.35, 0.15, 0.35)
-        else
-            self.bg:SetColorTexture(0.15, 0.25, 0.15, 0.3)
-        end
-    end)
+    row:EnableMouse(false)
 
     return row
 end
@@ -1298,42 +1285,10 @@ local function RefreshBlizzardSection()
             row:SetPoint("TOPLEFT", 0, yOff)
             row:SetPoint("TOPRIGHT", 0, yOff)
 
-            local canActivate = l.canActivate ~= false
             row.nameText:SetText(l.name)
-            row.isActive = l.isActive
-            row.canActivate = canActivate
-
-            if l.isActive then
-                row.marker:SetText(COLOR_GREEN .. ">|r")
-                row.bg:SetColorTexture(0.15, 0.35, 0.15, 0.35)
-                row.nameText:SetTextColor(0.2, 0.9, 0.2)
-            elseif not canActivate then
-                row.marker:SetText("")
-                row.bg:SetColorTexture(0.15, 0.15, 0.15, 0.2)
-                row.nameText:SetTextColor(0.4, 0.4, 0.4)
-            else
-                row.marker:SetText("")
-                row.bg:SetColorTexture(0.15, 0.25, 0.15, 0.3)
-                row.nameText:SetTextColor(0.9, 0.9, 0.9)
-            end
-
-            local layoutID = l.id
-            local specTag = l.specTag
-            row:SetScript("OnMouseUp", function(_, button)
-                if button == "LeftButton" then
-                    if not canActivate then
-                        local spec = ns.SpecFromSpecTag(specTag) or specTag
-                        ns.Print("|cFF888888Cannot switch: layout belongs to " .. spec .. " spec.|r")
-                        return
-                    end
-                    local ok, err = ns.ActivateBlizzardLayout(layoutID)
-                    if ok then
-                        RefreshAll()
-                    else
-                        ns.Print("|cFFFF0000" .. (err or "Failed to switch layout.") .. "|r")
-                    end
-                end
-            end)
+            row.marker:SetText("")
+            row.bg:SetColorTexture(0.15, 0.15, 0.15, 0.2)
+            row.nameText:SetTextColor(0.7, 0.7, 0.7)
 
             yOff = yOff - ROW_HEIGHT
         end
