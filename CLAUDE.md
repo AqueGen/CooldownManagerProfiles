@@ -18,3 +18,9 @@ WoW addon: save, switch, and share Cooldown Manager layout profiles.
 
 ### Lua Compatibility
 - WoW's Lua supports `goto`/`::label::` syntax, but `goto` **cannot jump over local variable declarations** into their scope. Use `if/else` blocks instead.
+
+## Release Process
+
+- `CHANGELOG.md` is a **manual changelog** used by BigWigsMods/packager for both GitHub releases and CurseForge.
+- Before each release, **overwrite** `CHANGELOG.md` with the notes for the current version only (packager uses the entire file as the release body).
+- Do NOT accumulate old versions in the file — only the latest release notes.

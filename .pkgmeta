@@ -1,5 +1,9 @@
 package-as: CooldownManagerProfiles
 
+manual-changelog:
+  filename: CHANGELOG.md
+  markup-type: markdown
+
 ignore:
   - README.md
   - CURSEFORGE.md
