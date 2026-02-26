@@ -833,6 +833,9 @@ function ns.LoadGlobalProfile(profileUUID)
     pcall(lm.SaveLayouts, lm)
 
     ns.SetActiveGlobalProfileUUID(profileUUID)
+    -- Record when this profile was applied so auto-sync can skip unchanged profiles
+    ns.EnsureCharTables()
+    ns.db.characters[ns.charKey].lastAppliedProfileModified = profile.modified
     if ns.RefreshUI then ns.RefreshUI() end
     StaticPopup_Show("CMP_RELOAD_UI")
     return true, loaded .. " layout(s) loaded for " .. classToken .. "."
@@ -881,6 +884,9 @@ function ns.SyncBlizzardToGlobalProfile(profileUUID)
     end
 
     profile.modified = time()
+    -- Update auto-sync timestamp so this character won't get a false popup
+    ns.EnsureCharTables()
+    ns.db.characters[ns.charKey].lastAppliedProfileModified = profile.modified
     if ns.RefreshUI then ns.RefreshUI() end
     return true, captured .. " layout(s) captured for " .. classToken .. "."
 end
@@ -888,66 +894,6 @@ end
 ---------------------------------------------------------------------------
 -- Auto-Sync
 ---------------------------------------------------------------------------
-
---- Compare profile's class layouts with current Blizzard layouts.
---- Returns true if they differ, false if they match.
-function ns.CompareProfileWithBlizzard(profileLayouts)
-    if not profileLayouts or #profileLayouts == 0 then return true end
-
-    local blizzLayouts = ns.GetBlizzardLayouts()
-
-    -- Quick check: count
-    if #blizzLayouts ~= #profileLayouts then return true end
-    if #blizzLayouts == 0 then return false end
-
-    -- Name check: sort and compare
-    local blizzNames = {}
-    for _, l in ipairs(blizzLayouts) do
-        blizzNames[#blizzNames + 1] = l.name or ""
-    end
-    table.sort(blizzNames)
-
-    local profNames = {}
-    for _, l in ipairs(profileLayouts) do
-        profNames[#profNames + 1] = l.name or ""
-    end
-    table.sort(profNames)
-
-    for i = 1, #blizzNames do
-        if blizzNames[i] ~= profNames[i] then return true end
-    end
-
-    -- Deep check: serialize each Blizzard layout and compare data strings
-    local lm = ns.GetLayoutManager()
-    if not lm or not lm.GetSerializer then return false end
-
-    local blizzData = {}
-    for _, l in ipairs(blizzLayouts) do
-        local serOk, serializer = pcall(lm.GetSerializer, lm)
-        if serOk and serializer and serializer.SerializeLayouts then
-            local dataOk, result = pcall(serializer.SerializeLayouts, serializer, l.id)
-            if dataOk and result then
-                blizzData[#blizzData + 1] = result
-            end
-        end
-    end
-
-    if #blizzData ~= #profileLayouts then return true end
-
-    table.sort(blizzData)
-
-    local profData = {}
-    for _, l in ipairs(profileLayouts) do
-        profData[#profData + 1] = l.data or ""
-    end
-    table.sort(profData)
-
-    for i = 1, #blizzData do
-        if blizzData[i] ~= profData[i] then return true end
-    end
-
-    return false
-end
 
 --- Check if auto-sync should trigger (called once from OnDataReady on initial login)
 function ns.CheckAutoSync()
@@ -970,9 +916,15 @@ function ns.CheckAutoSync()
     local profileLayouts = profile.layouts and profile.layouts[classToken]
     if not profileLayouts or #profileLayouts == 0 then return end
 
-    if not ns.CompareProfileWithBlizzard(profileLayouts) then return end
+    -- Skip if profile hasn't been modified since last application on this character.
+    -- Data comparison (CompareProfileWithBlizzard) is unreliable because Blizzard's
+    -- serializer embeds layout IDs which change on CreateLayoutsFromSerializedData.
+    ns.EnsureCharTables()
+    local charData = ns.db.characters[ns.charKey]
+    local lastApplied = charData and charData.lastAppliedProfileModified
+    if lastApplied and profile.modified and lastApplied >= profile.modified then return end
 
-    -- Layouts differ — prompt the user
+    -- Layouts differ or profile was updated — prompt the user
     StaticPopup_Show("CMP_AUTO_SYNC", profile.name)
 end
 

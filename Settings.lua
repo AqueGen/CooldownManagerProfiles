@@ -10,14 +10,10 @@ local LDBIcon = LibStub("LibDBIcon-1.0", true)
 if LDB then
     local cmLDB = LDB:NewDataObject("Cooldown Manager Profiles", {
         type = "launcher",
-        icon = "Interface\\AddOns\\CooldownManagerProfiles\\icon",
+        icon = "Interface\\Icons\\Spell_Holy_BorrowedTime",
         label = "CM Profiles",
-        OnClick = function(self, button)
-            if button == "LeftButton" then
-                ns.ToggleUI()
-            elseif button == "RightButton" then
-                ns.OpenSettings()
-            end
+        OnClick = function()
+            ns.ToggleUI()
         end,
         OnTooltipShow = function(tip)
             tip:AddLine("|cFF00CCFFCooldown Manager Profiles|r")
@@ -30,8 +26,7 @@ if LDB then
                 tip:AddLine("Profiles: " .. count, 0.7, 0.7, 0.7)
             end
             tip:AddLine(" ")
-            tip:AddLine("|cFFCCCCCCLeft-click|r to toggle window", 0.8, 0.8, 0.8)
-            tip:AddLine("|cFFCCCCCCRight-click|r to open settings", 0.8, 0.8, 0.8)
+            tip:AddLine("|cFFCCCCCCClick|r to toggle window", 0.8, 0.8, 0.8)
         end,
     })
     ns.cmLDB = cmLDB
