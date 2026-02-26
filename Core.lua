@@ -123,11 +123,13 @@ CooldownManagerProfilesDB = {
         },
     },
 
+    -- Account-wide auto-sync profile (UUID or nil)
+    autoSyncProfile = uuid,
+
     -- v4: Per-character state for global profiles
     characters = {
         ["Char-Realm"] = {
             activeGlobalProfile = uuid,
-            autoSyncProfile = uuid,  -- profile UUID to auto-sync on login (or nil)
         },
     },
 

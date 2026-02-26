@@ -998,12 +998,7 @@ local function CreateMainFrame()
     end
 
     local function RefreshAutoSyncDropdown()
-        if not ns.charKey then
-            autoSyncBtnText:SetText("Disabled")
-            return
-        end
-        local charData = ns.db.characters[ns.charKey]
-        local uuid = charData and charData.autoSyncProfile
+        local uuid = ns.db and ns.db.autoSyncProfile
         autoSyncBtnText:SetText(GetAutoSyncDisplayName(uuid))
     end
 
@@ -1013,8 +1008,7 @@ local function CreateMainFrame()
             row:Hide()
         end
 
-        local charData = ns.charKey and ns.db.characters[ns.charKey]
-        local currentUUID = charData and charData.autoSyncProfile
+        local currentUUID = ns.db and ns.db.autoSyncProfile
         local entries = {}
 
         -- "Disabled" option
@@ -1076,8 +1070,8 @@ local function CreateMainFrame()
 
             local uuid = entry.uuid
             row:SetScript("OnClick", function()
-                if ns.charKey and ns.db.characters[ns.charKey] then
-                    ns.db.characters[ns.charKey].autoSyncProfile = uuid
+                if ns.db then
+                    ns.db.autoSyncProfile = uuid
                 end
                 autoSyncMenu:Hide()
                 RefreshAutoSyncDropdown()

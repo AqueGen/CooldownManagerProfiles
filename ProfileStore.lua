@@ -955,11 +955,7 @@ function ns.CheckAutoSync()
     if not ns.isInitialLogin then return end
     ns.autoSyncCheckedThisSession = true
 
-    if not ns.charKey then return end
-    local charData = ns.db.characters[ns.charKey]
-    if not charData then return end
-
-    local uuid = charData.autoSyncProfile
+    local uuid = ns.db and ns.db.autoSyncProfile
     if not uuid then return end
 
     local profile
@@ -1026,8 +1022,7 @@ StaticPopupDialogs["CMP_AUTO_SYNC"] = {
     button2 = "Skip",
     timeout = 0, whileDead = true, hideOnEscape = true,
     OnAccept = function()
-        local charData = ns.charKey and ns.db.characters[ns.charKey]
-        local uuid = charData and charData.autoSyncProfile
+        local uuid = ns.db and ns.db.autoSyncProfile
         if uuid then
             local ok = ns.LoadGlobalProfile(uuid)
             if ok then ReloadUI() end
