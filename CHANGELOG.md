@@ -1,3 +1,10 @@
+## New: Preset Profiles
+
+- **Built-in preset profiles** — ready-to-use layouts from popular creators
+- First preset: **Luxthos** (all classes supported)
+- Presets appear in a dedicated section in the Profiles panel
+- Presets are read-only — you can load them but not modify
+
 ## New: Auto-Sync on Login
 
 Keep layouts synchronized across characters sharing the same profile.
