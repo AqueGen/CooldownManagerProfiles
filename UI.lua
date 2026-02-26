@@ -1131,6 +1131,19 @@ local function CreateMainFrame()
     autoSyncLabel:SetPoint("RIGHT", autoSyncBtn, "LEFT", -4, 0)
     autoSyncLabel:SetText("Auto-Sync:")
 
+    local autoSyncInfo = CreateFrame("Button", nil, mainFrame, "UIPanelInfoButton")
+    autoSyncInfo:SetPoint("RIGHT", autoSyncLabel, "LEFT", -2, 0)
+    autoSyncInfo:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_TOP")
+        GameTooltip:SetText("Auto-Sync")
+        GameTooltip:AddLine("On login, compares this profile's layouts with your current Cooldown Manager layouts.", 1, 1, 1, true)
+        GameTooltip:AddLine("If they differ, you'll be prompted to apply the profile and reload the UI.", 1, 1, 1, true)
+        GameTooltip:AddLine(" ")
+        GameTooltip:AddLine("Only triggers on first login, not on /reload.", 0.7, 0.7, 0.7, true)
+        GameTooltip:Show()
+    end)
+    autoSyncInfo:SetScript("OnLeave", GameTooltip_Hide)
+
     mainFrame.autoSyncDropdown = autoSyncBtn
     mainFrame.RefreshAutoSyncDropdown = RefreshAutoSyncDropdown
     RefreshAutoSyncDropdown()
