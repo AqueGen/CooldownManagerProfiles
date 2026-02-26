@@ -936,6 +936,206 @@ local function CreateMainFrame()
     end)
 
     ---------------------------------------------------------------------------
+    -- Auto-Sync dropdown (custom, no UIDropDownMenu — avoids func side-effects)
+    ---------------------------------------------------------------------------
+
+    local AUTOSYNC_BTN_W, AUTOSYNC_BTN_H = 170, 22
+    local AUTOSYNC_ROW_H = 20
+
+    -- Toggle button
+    local autoSyncBtn = CreateFrame("Button", nil, mainFrame, "BackdropTemplate")
+    autoSyncBtn:SetSize(AUTOSYNC_BTN_W, AUTOSYNC_BTN_H)
+    autoSyncBtn:SetPoint("BOTTOMRIGHT", -20, 18)
+    autoSyncBtn:SetBackdrop({
+        bgFile = "Interface\\Buttons\\White8x8",
+        edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+        edgeSize = 12,
+        insets = { left = 3, right = 3, top = 3, bottom = 3 },
+    })
+    autoSyncBtn:SetBackdropColor(0.1, 0.1, 0.15, 0.9)
+    autoSyncBtn:SetBackdropBorderColor(0.4, 0.4, 0.4, 0.8)
+
+    local autoSyncBtnText = autoSyncBtn:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    autoSyncBtnText:SetPoint("LEFT", 6, 0)
+    autoSyncBtnText:SetPoint("RIGHT", -16, 0)
+    autoSyncBtnText:SetJustifyH("LEFT")
+    autoSyncBtnText:SetText("Disabled")
+
+    local autoSyncArrow = autoSyncBtn:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    autoSyncArrow:SetPoint("RIGHT", -4, 0)
+    autoSyncArrow:SetText("v")
+
+    -- Popup menu frame
+    local autoSyncMenu = CreateFrame("Frame", nil, mainFrame, "BackdropTemplate")
+    autoSyncMenu:SetBackdrop({
+        bgFile = "Interface\\Buttons\\White8x8",
+        edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+        edgeSize = 12,
+        insets = { left = 3, right = 3, top = 3, bottom = 3 },
+    })
+    autoSyncMenu:SetBackdropColor(0.1, 0.1, 0.15, 0.95)
+    autoSyncMenu:SetBackdropBorderColor(0.4, 0.4, 0.4, 0.8)
+    autoSyncMenu:SetFrameStrata("FULLSCREEN_DIALOG")
+    autoSyncMenu:SetClampedToScreen(true)
+    autoSyncMenu:Hide()
+
+    local autoSyncMenuRows = {}
+
+    local function GetAutoSyncDisplayName(uuid)
+        if not uuid then return "Disabled" end
+        local profile
+        if ns.IsPresetProfile(uuid) then
+            profile = ns.GetPresetProfile(uuid)
+        else
+            profile = ns.GetGlobalProfile(uuid)
+        end
+        if not profile then return "???" end
+        local name = profile.name
+        if ns.IsPresetProfile(uuid) then
+            name = name .. " (Preset)"
+        end
+        return name
+    end
+
+    local function RefreshAutoSyncDropdown()
+        if not ns.charKey then
+            autoSyncBtnText:SetText("Disabled")
+            return
+        end
+        local charData = ns.db.characters[ns.charKey]
+        local uuid = charData and charData.autoSyncProfile
+        autoSyncBtnText:SetText(GetAutoSyncDisplayName(uuid))
+    end
+
+    local function BuildAutoSyncMenu()
+        -- Hide old rows
+        for _, row in ipairs(autoSyncMenuRows) do
+            row:Hide()
+        end
+
+        local charData = ns.charKey and ns.db.characters[ns.charKey]
+        local currentUUID = charData and charData.autoSyncProfile
+        local entries = {}
+
+        -- "Disabled" option
+        entries[#entries + 1] = { uuid = nil, text = "Disabled", isPreset = false }
+
+        -- Preset profiles
+        for presetID, preset in pairs(ns.presets or {}) do
+            entries[#entries + 1] = {
+                uuid = presetID,
+                text = "|cFFE6CC80" .. preset.name .. "|r (Preset)",
+                isPreset = true,
+            }
+        end
+
+        -- User profiles
+        local profiles = ns.GetGlobalProfileList()
+        for _, p in ipairs(profiles) do
+            entries[#entries + 1] = { uuid = p.uuid, text = p.name, isPreset = false }
+        end
+
+        local menuW = AUTOSYNC_BTN_W
+        local menuH = #entries * AUTOSYNC_ROW_H + 8  -- 4px padding top+bottom
+        autoSyncMenu:SetSize(menuW, menuH)
+
+        for i, entry in ipairs(entries) do
+            local row = autoSyncMenuRows[i]
+            if not row then
+                row = CreateFrame("Button", nil, autoSyncMenu)
+                row:SetHeight(AUTOSYNC_ROW_H)
+
+                row.bg = row:CreateTexture(nil, "BACKGROUND")
+                row.bg:SetAllPoints()
+                row.bg:SetColorTexture(0, 0, 0, 0)
+
+                row.label = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+                row.label:SetPoint("LEFT", 6, 0)
+                row.label:SetPoint("RIGHT", -20, 0)
+                row.label:SetJustifyH("LEFT")
+
+                row.check = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+                row.check:SetPoint("RIGHT", -4, 0)
+
+                row:SetScript("OnEnter", function(self)
+                    self.bg:SetColorTexture(0.2, 0.2, 0.3, 0.6)
+                end)
+                row:SetScript("OnLeave", function(self)
+                    self.bg:SetColorTexture(0, 0, 0, 0)
+                end)
+
+                autoSyncMenuRows[i] = row
+            end
+
+            row:SetPoint("TOPLEFT", autoSyncMenu, "TOPLEFT", 4, -4 - (i - 1) * AUTOSYNC_ROW_H)
+            row:SetPoint("TOPRIGHT", autoSyncMenu, "TOPRIGHT", -4, -4 - (i - 1) * AUTOSYNC_ROW_H)
+            row.label:SetText(entry.text)
+
+            local isSelected = (currentUUID == entry.uuid)
+            row.check:SetText(isSelected and "|cFF00FF00>|r" or "")
+
+            local uuid = entry.uuid
+            row:SetScript("OnClick", function()
+                if ns.charKey and ns.db.characters[ns.charKey] then
+                    ns.db.characters[ns.charKey].autoSyncProfile = uuid
+                end
+                autoSyncMenu:Hide()
+                RefreshAutoSyncDropdown()
+            end)
+
+            row:Show()
+        end
+    end
+
+    autoSyncBtn:SetScript("OnClick", function()
+        if autoSyncMenu:IsShown() then
+            autoSyncMenu:Hide()
+        else
+            BuildAutoSyncMenu()
+            autoSyncMenu:ClearAllPoints()
+            autoSyncMenu:SetPoint("BOTTOMRIGHT", autoSyncBtn, "TOPRIGHT", 0, 2)
+            autoSyncMenu:Show()
+        end
+    end)
+
+    -- Close menu when clicking elsewhere
+    autoSyncMenu:SetScript("OnShow", function(self)
+        self:SetPropagateKeyboardInput(true)
+    end)
+    autoSyncMenu:EnableMouse(true)
+    autoSyncMenu:SetScript("OnHide", function() end)
+
+    -- Close on Escape or clicking outside
+    local autoSyncCloseWatcher = CreateFrame("Frame", nil, UIParent)
+    autoSyncCloseWatcher:SetFrameStrata("DIALOG")
+    autoSyncCloseWatcher:SetAllPoints(UIParent)
+    autoSyncCloseWatcher:EnableMouse(true)
+    autoSyncCloseWatcher:SetScript("OnMouseDown", function()
+        autoSyncMenu:Hide()
+        autoSyncCloseWatcher:Hide()
+    end)
+    autoSyncCloseWatcher:Hide()
+
+    local origShow = autoSyncMenu.Show
+    autoSyncMenu.Show = function(self)
+        origShow(self)
+        autoSyncCloseWatcher:Show()
+    end
+    local origHide = autoSyncMenu.Hide
+    autoSyncMenu.Hide = function(self)
+        origHide(self)
+        autoSyncCloseWatcher:Hide()
+    end
+
+    local autoSyncLabel = mainFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    autoSyncLabel:SetPoint("RIGHT", autoSyncBtn, "LEFT", -4, 0)
+    autoSyncLabel:SetText("Auto-Sync:")
+
+    mainFrame.autoSyncDropdown = autoSyncBtn
+    mainFrame.RefreshAutoSyncDropdown = RefreshAutoSyncDropdown
+    RefreshAutoSyncDropdown()
+
+    ---------------------------------------------------------------------------
     -- Sizing logic
     ---------------------------------------------------------------------------
 
@@ -1602,6 +1802,7 @@ RefreshAll = function()
     RefreshProfileContents()
     RefreshBlizzardSection()
     RefreshTemplateSection()
+    if mainFrame.RefreshAutoSyncDropdown then mainFrame.RefreshAutoSyncDropdown() end
 end
 
 ---------------------------------------------------------------------------

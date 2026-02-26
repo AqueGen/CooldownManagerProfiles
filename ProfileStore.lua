@@ -886,6 +886,101 @@ function ns.SyncBlizzardToGlobalProfile(profileUUID)
 end
 
 ---------------------------------------------------------------------------
+-- Auto-Sync
+---------------------------------------------------------------------------
+
+--- Compare profile's class layouts with current Blizzard layouts.
+--- Returns true if they differ, false if they match.
+function ns.CompareProfileWithBlizzard(profileLayouts)
+    if not profileLayouts or #profileLayouts == 0 then return true end
+
+    local blizzLayouts = ns.GetBlizzardLayouts()
+
+    -- Quick check: count
+    if #blizzLayouts ~= #profileLayouts then return true end
+    if #blizzLayouts == 0 then return false end
+
+    -- Name check: sort and compare
+    local blizzNames = {}
+    for _, l in ipairs(blizzLayouts) do
+        blizzNames[#blizzNames + 1] = l.name or ""
+    end
+    table.sort(blizzNames)
+
+    local profNames = {}
+    for _, l in ipairs(profileLayouts) do
+        profNames[#profNames + 1] = l.name or ""
+    end
+    table.sort(profNames)
+
+    for i = 1, #blizzNames do
+        if blizzNames[i] ~= profNames[i] then return true end
+    end
+
+    -- Deep check: serialize each Blizzard layout and compare data strings
+    local lm = ns.GetLayoutManager()
+    if not lm or not lm.GetSerializer then return false end
+
+    local blizzData = {}
+    for _, l in ipairs(blizzLayouts) do
+        local serOk, serializer = pcall(lm.GetSerializer, lm)
+        if serOk and serializer and serializer.SerializeLayouts then
+            local dataOk, result = pcall(serializer.SerializeLayouts, serializer, l.id)
+            if dataOk and result then
+                blizzData[#blizzData + 1] = result
+            end
+        end
+    end
+
+    if #blizzData ~= #profileLayouts then return true end
+
+    table.sort(blizzData)
+
+    local profData = {}
+    for _, l in ipairs(profileLayouts) do
+        profData[#profData + 1] = l.data or ""
+    end
+    table.sort(profData)
+
+    for i = 1, #blizzData do
+        if blizzData[i] ~= profData[i] then return true end
+    end
+
+    return false
+end
+
+--- Check if auto-sync should trigger (called once from OnDataReady on initial login)
+function ns.CheckAutoSync()
+    if ns.autoSyncCheckedThisSession then return end
+    if not ns.isInitialLogin then return end
+    ns.autoSyncCheckedThisSession = true
+
+    if not ns.charKey then return end
+    local charData = ns.db.characters[ns.charKey]
+    if not charData then return end
+
+    local uuid = charData.autoSyncProfile
+    if not uuid then return end
+
+    local profile
+    if ns.IsPresetProfile(uuid) then
+        profile = ns.GetPresetProfile(uuid)
+    else
+        profile = ns.GetGlobalProfile(uuid)
+    end
+    if not profile then return end
+
+    local classToken = ns.GetClassToken()
+    local profileLayouts = profile.layouts and profile.layouts[classToken]
+    if not profileLayouts or #profileLayouts == 0 then return end
+
+    if not ns.CompareProfileWithBlizzard(profileLayouts) then return end
+
+    -- Layouts differ — prompt the user
+    StaticPopup_Show("CMP_AUTO_SYNC", profile.name)
+end
+
+---------------------------------------------------------------------------
 -- Print all
 ---------------------------------------------------------------------------
 
@@ -923,6 +1018,21 @@ StaticPopupDialogs["CMP_RELOAD_UI"] = {
     button1 = "Reload Now", button2 = "Later",
     timeout = 0, whileDead = true, hideOnEscape = true,
     OnAccept = function() ReloadUI() end,
+}
+
+StaticPopupDialogs["CMP_AUTO_SYNC"] = {
+    text = "CM Profiles\n\nProfile \"%s\" has different layouts for your class.\n\n|cFFFF4444WARNING:|r Applying will replace ALL current\nCooldown Manager layouts and reload the UI.",
+    button1 = "Apply & Reload",
+    button2 = "Skip",
+    timeout = 0, whileDead = true, hideOnEscape = true,
+    OnAccept = function()
+        local charData = ns.charKey and ns.db.characters[ns.charKey]
+        local uuid = charData and charData.autoSyncProfile
+        if uuid then
+            local ok = ns.LoadGlobalProfile(uuid)
+            if ok then ReloadUI() end
+        end
+    end,
 }
 
 StaticPopupDialogs["CMP_SAVE_PROFILE"] = {

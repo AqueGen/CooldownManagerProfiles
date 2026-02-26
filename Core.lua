@@ -10,6 +10,8 @@ ns.db = nil
 ns.charKey = nil
 ns.dataLoaded = false
 ns.layoutManager = nil
+ns.isInitialLogin = false
+ns.autoSyncCheckedThisSession = false
 
 -- Libraries
 ns.LibDeflate = LibStub:GetLibrary("LibDeflate")
@@ -123,7 +125,10 @@ CooldownManagerProfilesDB = {
 
     -- v4: Per-character state for global profiles
     characters = {
-        ["Char-Realm"] = { activeGlobalProfile = uuid },
+        ["Char-Realm"] = {
+            activeGlobalProfile = uuid,
+            autoSyncProfile = uuid,  -- profile UUID to auto-sync on login (or nil)
+        },
     },
 
     -- Per-character profiles (full Blizzard CDM blobs)
@@ -233,6 +238,10 @@ ef:SetScript("OnEvent", function(self, event, ...)
         end
 
     elseif event == "PLAYER_ENTERING_WORLD" then
+        local isInitialLogin = ...
+        if isInitialLogin then
+            ns.isInitialLogin = true
+        end
         if not ns.charKey then
             ns.charKey = ns.GetCharKey()
             if ns.charKey then ns.EnsureCharTables() end
@@ -247,6 +256,10 @@ ef:SetScript("OnEvent", function(self, event, ...)
                     end
                 end
             end)
+        end
+        -- If CDM data loaded before PEW, CheckAutoSync was skipped (isInitialLogin not set yet)
+        if isInitialLogin and ns.dataLoaded and ns.CheckAutoSync then
+            ns.CheckAutoSync()
         end
 
     elseif event == "COOLDOWN_VIEWER_DATA_LOADED" then
@@ -303,6 +316,9 @@ function ns.OnDataReady()
     end
 
     if ns.RefreshUI then ns.RefreshUI() end
+
+    -- Auto-sync check (fires once on initial login)
+    if ns.CheckAutoSync then ns.CheckAutoSync() end
 end
 
 ---------------------------------------------------------------------------
