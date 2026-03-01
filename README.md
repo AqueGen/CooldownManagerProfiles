@@ -1,6 +1,7 @@
 # Cooldown Manager Profiles
 
 [![CurseForge](https://img.shields.io/badge/CurseForge-CooldownManagerProfiles-orange)](https://www.curseforge.com/wow/addons/cooldownmanagerprofiles)
+[![Wago Addons](https://img.shields.io/badge/Wago-CooldownManagerProfiles-teal)](https://addons.wago.io/addons/EGPeA3N1)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![WoW Version](https://img.shields.io/badge/WoW-12.0.1+-brightgreen)](https://worldofwarcraft.com)
 
@@ -19,9 +20,13 @@ Unlimited profiles for the Blizzard Cooldown Manager with global template librar
 
 ## Installation
 
-1. Download and extract into `Interface/AddOns/CooldownManagerProfiles`
-2. Restart World of Warcraft or `/reload`
-3. Type `/cm` to open the main window
+Install via your preferred addon manager:
+
+- [CurseForge](https://www.curseforge.com/wow/addons/cooldownmanagerprofiles)
+- [Wago Addons](https://addons.wago.io/addons/EGPeA3N1)
+- [GitHub Releases](https://github.com/AqueGen/CooldownManagerProfiles/releases)
+
+Type `/cm` to open the main window.
 
 ## Slash Commands
 
