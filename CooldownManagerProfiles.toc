@@ -2,7 +2,7 @@
 ## Title: Cooldown Manager Profiles
 ## Notes: Save, switch and share layouts for Blizzard's Cooldown Manager.
 ## Author: AqueGen
-## Version: 2.1.3
+## Version: 2.1.4
 ## X-Curse-Project-ID: 1464144
 ## X-Wago-ID: EGPeA3N1
 ## SavedVariables: CooldownManagerProfilesDB, CooldownMasterDB
