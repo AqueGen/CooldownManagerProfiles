@@ -19,6 +19,7 @@ ns.presets["preset:luxthos"] = {
     description = "Cooldown Manager layouts by Luxthos for all classes.",
     author = "Luxthos",
     url = "https://www.luxthos.com/",
+    modified = 1718100000,
     layouts = {
         -----------------------------------------------------------------
         -- DEATH KNIGHT

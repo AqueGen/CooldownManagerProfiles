@@ -917,12 +917,14 @@ function ns.CheckAutoSync()
     if not profileLayouts or #profileLayouts == 0 then return end
 
     -- Skip if profile hasn't been modified since last application on this character.
-    -- Data comparison (CompareProfileWithBlizzard) is unreliable because Blizzard's
-    -- serializer embeds layout IDs which change on CreateLayoutsFromSerializedData.
+    -- If profile has no modified date (presets), skip sync prompt to avoid redundant reloads.
     ns.EnsureCharTables()
     local charData = ns.db.characters[ns.charKey]
     local lastApplied = charData and charData.lastAppliedProfileModified
-    if lastApplied and profile.modified and lastApplied >= profile.modified then return end
+    
+    if not profile.modified or (lastApplied and lastApplied >= profile.modified) then 
+        return 
+    end
 
     -- Layouts differ or profile was updated — prompt the user
     StaticPopup_Show("CMP_AUTO_SYNC", profile.name)
