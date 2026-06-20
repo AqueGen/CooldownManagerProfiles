@@ -1,7 +1,7 @@
 local addonName, ns = ...
 
 ns.ADDON_NAME = "Cooldown Manager Profiles"
-ns.VERSION = "2.0.1"
+ns.VERSION = "2.1.7"
 ns.PREFIX_COLOR = "|cFF00CCFF"
 ns.DB_VERSION = 4
 
@@ -358,6 +358,15 @@ SlashCmdList["COOLDOWNMANAGERPROFILES"] = function(msg)
 
     elseif cmd == "settings" or cmd == "config" or cmd == "options" then
         if ns.OpenSettings then ns.OpenSettings() end
+
+    elseif cmd == "debug" or cmd == "dbg" then
+        if arg == "sync" then
+            if ns.SimulateAutoSyncCheck then ns.SimulateAutoSyncCheck() end
+        elseif arg == "reset" then
+            if ns.ResetAppliedHashes then ns.ResetAppliedHashes() end
+        else
+            if ns.PrintAutoSyncDebug then ns.PrintAutoSyncDebug() end
+        end
 
     elseif cmd == "help" then
         ns.Print("Commands:")

@@ -287,6 +287,8 @@ function ns.ExportBlizzardLayout(layoutID)
 end
 
 function ns.ExportActiveProfile()
+    if not ns.charKey then return nil, "Character not ready." end
+    ns.EnsureCharTables()
     local name = ns.GetActiveProfileName()
     if not name then return nil, "No active profile." end
     local profile = ns.db.profiles[ns.charKey][name]
@@ -433,11 +435,21 @@ function ns.DeleteGlobalProfile(uuid)
     if not uuid or not ns.db.globalProfiles[uuid] then
         return false, "Profile not found."
     end
-    -- Clear activeGlobalProfile references
+    -- Clear activeGlobalProfile references and applied fingerprints
     for charKey, charData in pairs(ns.db.characters) do
         if charData.activeGlobalProfile == uuid then
             charData.activeGlobalProfile = nil
         end
+        if charData.autoSyncMuted then
+            charData.autoSyncMuted[uuid] = nil
+        end
+        if charData.autoSyncApplied then
+            charData.autoSyncApplied[uuid] = nil
+        end
+    end
+    -- Drop dangling auto-sync target so it doesn't reference a deleted profile
+    if ns.db.autoSyncProfile == uuid then
+        ns.db.autoSyncProfile = nil
     end
     ns.db.globalProfiles[uuid] = nil
     if ns.RefreshUI then ns.RefreshUI() end
@@ -782,6 +794,10 @@ function ns.LoadGlobalProfile(profileUUID)
     ns.EnsureCharTables()
     ns.db.layoutNameOverrides[ns.charKey] = {}
 
+    -- Snapshot current C-level layout data so a failed load can be rolled back
+    -- instead of leaving the character with no Cooldown Manager layouts.
+    local preLoadSnapshot = C_CooldownViewer.GetLayoutData()
+
     -- Remove all existing Blizzard layouts
     local existingLayouts = ns.GetBlizzardLayouts()
     for i = #existingLayouts, 1, -1 do
@@ -826,6 +842,11 @@ function ns.LoadGlobalProfile(profileUUID)
     end
 
     if loaded == 0 then
+        -- Roll back to the pre-load layouts (C-API write, no taint) so a failed
+        -- load does not wipe the user's Cooldown Manager.
+        if preLoadSnapshot and preLoadSnapshot ~= "" then
+            pcall(C_CooldownViewer.SetLayoutData, preLoadSnapshot)
+        end
         return false, "Failed to load any layouts. Data may be incompatible."
     end
 
@@ -833,9 +854,12 @@ function ns.LoadGlobalProfile(profileUUID)
     pcall(lm.SaveLayouts, lm)
 
     ns.SetActiveGlobalProfileUUID(profileUUID)
-    -- Record when this profile was applied so auto-sync can skip unchanged profiles
+    -- CDM now runs this exact version of the profile: record it as the applied baseline
+    -- and clear any prior Mute for it.
     ns.EnsureCharTables()
-    ns.db.characters[ns.charKey].lastAppliedProfileModified = profile.modified
+    local cd = ns.db.characters[ns.charKey]
+    ns.GetAutoSyncAppliedTable(cd)[profileUUID] = ns.ProfileDataHash(profile, classToken)
+    ns.GetAutoSyncMuteTable(cd)[profileUUID] = nil
     if ns.RefreshUI then ns.RefreshUI() end
     StaticPopup_Show("CMP_RELOAD_UI")
     return true, loaded .. " layout(s) loaded for " .. classToken .. "."
@@ -884,9 +908,12 @@ function ns.SyncBlizzardToGlobalProfile(profileUUID)
     end
 
     profile.modified = time()
-    -- Update auto-sync timestamp so this character won't get a false popup
+    -- Profile now mirrors the live CDM: record this version as the applied baseline and
+    -- clear any prior Mute for it.
     ns.EnsureCharTables()
-    ns.db.characters[ns.charKey].lastAppliedProfileModified = profile.modified
+    local cd = ns.db.characters[ns.charKey]
+    ns.GetAutoSyncAppliedTable(cd)[profileUUID] = ns.ProfileDataHash(profile, classToken)
+    ns.GetAutoSyncMuteTable(cd)[profileUUID] = nil
     if ns.RefreshUI then ns.RefreshUI() end
     return true, captured .. " layout(s) captured for " .. classToken .. "."
 end
@@ -895,39 +922,238 @@ end
 -- Auto-Sync
 ---------------------------------------------------------------------------
 
---- Check if auto-sync should trigger (called once from OnDataReady on initial login)
-function ns.CheckAutoSync()
-    if ns.autoSyncCheckedThisSession then return end
-    if not ns.isInitialLogin then return end
-    ns.autoSyncCheckedThisSession = true
+--- Per-character map { [profileUUID] = true } of auto-sync targets the user has MUTED
+--- on this character. Muted targets never prompt until un-muted (the "Mute" checkbox
+--- next to the Auto-Sync dropdown). Cleared automatically when the profile is applied.
+function ns.GetAutoSyncMuteTable(charData)
+    if not charData.autoSyncMuted then charData.autoSyncMuted = {} end
+    return charData.autoSyncMuted
+end
+
+--- Order-independent signature of a list of layout-name strings.
+local function nameSignature(names)
+    table.sort(names)
+    return table.concat(names, "\31")
+end
+
+--- Signature of the layout NAMES a profile defines for one class. Names survive
+--- apply/import unchanged (unlike serialized data, whose Blizzard layout IDs change),
+--- so they reliably identify which profile a set of Cooldown Manager layouts came from.
+function ns.ProfileNameSignature(profile, classToken)
+    local layouts = profile and profile.layouts and profile.layouts[classToken]
+    if not layouts or #layouts == 0 then return nil end
+    local names = {}
+    for _, entry in ipairs(layouts) do names[#names + 1] = entry.name or "" end
+    return nameSignature(names)
+end
+
+--- Signature of the layout names currently live in the Blizzard Cooldown Manager.
+function ns.CurrentCDMNameSignature()
+    local names = {}
+    for _, l in ipairs(ns.GetBlizzardLayouts()) do names[#names + 1] = l.name or "" end
+    return nameSignature(names)
+end
+
+--- Per-character map { [profileUUID] = dataHash } recording the VERSION of a target
+--- profile at the moment it was last applied/adopted on this character. Lets us detect
+--- "the profile was edited since I applied it" (push profile updates to alts).
+function ns.GetAutoSyncAppliedTable(charData)
+    if not charData.autoSyncApplied then charData.autoSyncApplied = {} end
+    return charData.autoSyncApplied
+end
+
+--- Content hash (djb2) of a profile's stored layouts for one class: name + spec + data.
+--- This is a stored-vs-stored fingerprint (never re-serializes live CDM), so it is
+--- robust to Blizzard's unstable layout IDs. It changes only when the profile is
+--- genuinely edited (layout added/removed/renamed/reconfigured) or a preset is bumped.
+function ns.ProfileDataHash(profile, classToken)
+    local layouts = profile and profile.layouts and profile.layouts[classToken]
+    if not layouts or #layouts == 0 then return nil end
+    local MODULUS = 2147483648  -- 2^31, keeps the running hash within double precision
+    local hash = 5381           -- djb2 seed
+    local total = 0
+    for _, entry in ipairs(layouts) do
+        local sig = (entry.name or "") .. "\30" .. (entry.spec or "") .. "\31" .. (entry.data or "")
+        total = total + #sig
+        for i = 1, #sig do
+            hash = (hash * 33 + sig:byte(i)) % MODULUS
+        end
+        hash = (hash * 33 + 1) % MODULUS  -- per-layout separator: fixes order and count
+    end
+    return string.format("%d:%x", total, hash)
+end
+
+--- Pure decision for auto-sync. No side effects, so it is safe to call from a
+--- debug command. Returns an info table; info.decision is one of:
+---   "no-target"        - auto-sync disabled
+---   "missing-profile"  - target UUID no longer resolves
+---   "no-class-layouts" - target profile has nothing for this class
+---   "in-sync"          - the CDM already runs the target (or the user dismissed it)
+---   "prompt"           - the CDM differs from the target -> show popup
+function ns.EvaluateAutoSync()
+    local info = { charKey = ns.charKey }
 
     local uuid = ns.db and ns.db.autoSyncProfile
-    if not uuid then return end
+    info.uuid = uuid
+    if not uuid then info.decision = "no-target"; return info end
 
-    local profile
-    if ns.IsPresetProfile(uuid) then
-        profile = ns.GetPresetProfile(uuid)
-    else
-        profile = ns.GetGlobalProfile(uuid)
-    end
-    if not profile then return end
+    local isPreset = ns.IsPresetProfile(uuid)
+    info.isPreset = isPreset
+    local profile = isPreset and ns.GetPresetProfile(uuid) or ns.GetGlobalProfile(uuid)
+    if not profile then info.decision = "missing-profile"; return info end
+    info.name = profile.name
 
     local classToken = ns.GetClassToken()
-    local profileLayouts = profile.layouts and profile.layouts[classToken]
-    if not profileLayouts or #profileLayouts == 0 then return end
+    info.class = classToken
+    local layouts = profile.layouts and profile.layouts[classToken]
+    if not layouts or #layouts == 0 then info.decision = "no-class-layouts"; return info end
 
-    -- Skip if profile hasn't been modified since last application on this character.
-    -- If profile has no modified date (presets), skip sync prompt to avoid redundant reloads.
+    if not ns.charKey then info.decision = "no-target"; return info end
     ns.EnsureCharTables()
     local charData = ns.db.characters[ns.charKey]
-    local lastApplied = charData and charData.lastAppliedProfileModified
-    
-    if not profile.modified or (lastApplied and lastApplied >= profile.modified) then 
-        return 
+
+    -- Detection: the CDM is out of sync if a DIFFERENT profile is loaded (layout names
+    -- differ) OR the target was edited since it was applied here (version hash differs).
+    -- Names read the live CDM; the version hash is stored-vs-stored (no unstable IDs).
+    local targetSig = ns.ProfileNameSignature(profile, classToken)
+    local cdmSig = ns.CurrentCDMNameSignature()
+    local targetHash = ns.ProfileDataHash(profile, classToken)
+    local appliedVer = ns.GetAutoSyncAppliedTable(charData)[uuid]
+    info.targetSig = targetSig
+    info.cdmSig = cdmSig
+    info.targetHash = targetHash
+    info.appliedVer = appliedVer
+
+    local namesMatch = (cdmSig == targetSig)
+    local versionStale = (appliedVer ~= nil and appliedVer ~= targetHash)
+    info.outOfSync = (not namesMatch) or versionStale
+    info.muted = ns.GetAutoSyncMuteTable(charData)[uuid] == true
+
+    if not info.outOfSync then
+        info.decision = "in-sync"
+        -- Adopt the current version as the baseline the first time the CDM matches, so a
+        -- later edit to the profile is detected as out-of-sync (recorded in CheckAutoSync).
+        info.adoptVersion = (appliedVer == nil)
+    elseif info.muted then
+        info.decision = "in-sync"           -- suppressed by the per-character Mute
+    else
+        info.decision = "prompt"
+        info.reason = namesMatch and "profile-updated" or "wrong-profile"
+    end
+    return info
+end
+
+--- Check if auto-sync should trigger. Runs once per session -- on a full login AND on
+--- a /reload (the isInitialLogin gate was removed so reloads are covered). The per-
+--- character Mute persists, so a muted profile never prompts until un-muted.
+function ns.CheckAutoSync()
+    if ns.autoSyncCheckedThisSession then return end
+
+    -- Readiness guard: on /reload the data-loaded event can fire before the LayoutManager
+    -- has enumerated the CDM layouts. Comparing names then sees an EMPTY live CDM and
+    -- produces a false "differs". If the C-level store has layout data but lm reports
+    -- none yet, retry shortly (bounded) instead of prompting -- and do NOT consume the
+    -- once-per-session flag until we have a real reading.
+    if #ns.GetBlizzardLayouts() == 0 and C_CooldownViewer then
+        local okData, data = pcall(C_CooldownViewer.GetLayoutData)
+        if okData and data and data ~= "" then
+            ns.autoSyncReadyRetries = (ns.autoSyncReadyRetries or 0) + 1
+            if ns.autoSyncReadyRetries <= 10 then
+                C_Timer.After(0.5, ns.CheckAutoSync)
+                return
+            end
+        end
     end
 
-    -- Layouts differ or profile was updated — prompt the user
-    StaticPopup_Show("CMP_AUTO_SYNC", profile.name)
+    ns.autoSyncCheckedThisSession = true
+
+    local info = ns.EvaluateAutoSync()
+
+    -- Adopt the current version as the baseline the first time we see the CDM already
+    -- running the target (so later edits to the profile are detected as out-of-sync).
+    if info.adoptVersion and info.uuid and info.targetHash and ns.charKey then
+        ns.EnsureCharTables()
+        ns.GetAutoSyncAppliedTable(ns.db.characters[ns.charKey])[info.uuid] = info.targetHash
+    end
+
+    if info.decision ~= "prompt" then return end
+    -- Pass the evaluated target so the popup acts on exactly what was judged, not a live
+    -- db.autoSyncProfile that may change before the user clicks.
+    StaticPopup_Show("CMP_AUTO_SYNC", info.name, nil, { uuid = info.uuid })
+end
+
+--- Is the current auto-sync target muted on THIS character?
+function ns.IsAutoSyncMuted()
+    local uuid = ns.db and ns.db.autoSyncProfile
+    if not uuid or not ns.charKey then return false end
+    ns.EnsureCharTables()
+    return ns.GetAutoSyncMuteTable(ns.db.characters[ns.charKey])[uuid] == true
+end
+
+--- Set or clear the Mute for the current target on this character. Un-muting re-runs the
+--- check immediately, so the prompt reappears at once if the CDM is out of sync.
+function ns.SetAutoSyncMuted(muted)
+    local uuid = ns.db and ns.db.autoSyncProfile
+    if not uuid or not ns.charKey then return end
+    ns.EnsureCharTables()
+    local muteTable = ns.GetAutoSyncMuteTable(ns.db.characters[ns.charKey])
+    if muted then
+        muteTable[uuid] = true
+    else
+        muteTable[uuid] = nil
+        ns.autoSyncCheckedThisSession = false
+        ns.autoSyncReadyRetries = 0
+        if ns.CheckAutoSync then ns.CheckAutoSync() end
+    end
+end
+
+--- Debug: clear this character's auto-sync mutes and applied-version baselines
+--- (/cm debug reset). Use to re-arm the prompt after muting; the next check is fresh.
+function ns.ResetAppliedHashes()
+    if not ns.charKey then ns.Print("No character ready."); return end
+    ns.EnsureCharTables()
+    ns.db.characters[ns.charKey].autoSyncMuted = {}
+    ns.db.characters[ns.charKey].autoSyncApplied = {}
+    ns.db.characters[ns.charKey].autoSyncAck = nil  -- drop obsolete field
+    ns.db.characters[ns.charKey].appliedProfileHash = nil  -- drop obsolete field
+    ns.db.characters[ns.charKey].lastAppliedProfileModified = nil  -- drop obsolete field
+    ns.Print("Cleared auto-sync state (mutes + applied versions) for this character.")
+    ns.PrintAutoSyncDebug()
+end
+
+--- Debug: run the login auto-sync check on demand, exactly as a fresh login would
+--- (/cm debug sync). Temporarily forces the login gate so the real CheckAutoSync ->
+--- StaticPopup path runs without having to relog. Restores the flags afterward so the
+--- real session is unaffected. Shows the popup if (and only if) it would genuinely nag.
+function ns.SimulateAutoSyncCheck()
+    ns.Print("Simulating login auto-sync check (forcing initial-login gate)...")
+    local prevChecked = ns.autoSyncCheckedThisSession
+    local prevInitial = ns.isInitialLogin
+    ns.autoSyncCheckedThisSession = false
+    ns.isInitialLogin = true
+    ns.CheckAutoSync()
+    ns.isInitialLogin = prevInitial
+    ns.autoSyncCheckedThisSession = prevChecked
+    ns.PrintAutoSyncDebug()
+end
+
+--- Print the auto-sync decision inputs for verification (/cm debug).
+function ns.PrintAutoSyncDebug()
+    local info = ns.EvaluateAutoSync()
+    ns.Print("=== Auto-Sync Debug ===")
+    print("  char: " .. tostring(info.charKey) .. "   class: " .. tostring(info.class))
+    print("  target: " .. tostring(info.name) .. " (" .. tostring(info.uuid) .. ")"
+        .. (info.isPreset and " |cFFE6CC80preset|r" or ""))
+    print("  target names: |cFFFFFFFF" .. tostring(info.targetSig) .. "|r")
+    print("  CDM names:    |cFFFFFFFF" .. tostring(info.cdmSig) .. "|r")
+    print("  target version: |cFFFFFFFF" .. tostring(info.targetHash) .. "|r"
+        .. "   applied: |cFFFFFFFF" .. tostring(info.appliedVer) .. "|r")
+    print("  muted: |cFFFFFFFF" .. tostring(info.muted) .. "|r")
+    if info.reason then print("  reason: |cFFFF9933" .. tostring(info.reason) .. "|r") end
+    local willPrompt = info.decision == "prompt"
+    local color = willPrompt and "|cFFFF4444" or "|cFF00FF00"
+    print("  DECISION: " .. color .. tostring(info.decision) .. "|r"
+        .. (willPrompt and "  (popup WOULD show)" or "  (no popup)"))
 end
 
 ---------------------------------------------------------------------------
@@ -973,13 +1199,22 @@ StaticPopupDialogs["CMP_RELOAD_UI"] = {
 StaticPopupDialogs["CMP_AUTO_SYNC"] = {
     text = "CM Profiles\n\nProfile \"%s\" has different layouts for your class.\n\n|cFFFF4444WARNING:|r Applying will replace ALL current\nCooldown Manager layouts and reload the UI.",
     button1 = "Apply & Reload",
-    button2 = "Skip",
+    button2 = "Don't ask again",
     timeout = 0, whileDead = true, hideOnEscape = true,
-    OnAccept = function()
-        local uuid = ns.db and ns.db.autoSyncProfile
+    OnAccept = function(self, data)
+        local uuid = data and data.uuid
         if uuid then
-            local ok = ns.LoadGlobalProfile(uuid)
+            local ok = ns.LoadGlobalProfile(uuid)  -- also clears the Mute for this profile
             if ok then ReloadUI() end
+        end
+    end,
+    OnCancel = function(self, data)
+        -- "Don't ask again" / ESC: mute auto-sync for this profile on this character. The
+        -- "Mute" checkbox next to the Auto-Sync dropdown reflects and toggles this.
+        if data and data.uuid and ns.charKey then
+            ns.EnsureCharTables()
+            ns.GetAutoSyncMuteTable(ns.db.characters[ns.charKey])[data.uuid] = true
+            if ns.RefreshAutoSyncUI then ns.RefreshAutoSyncUI() end
         end
     end,
 }

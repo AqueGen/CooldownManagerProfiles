@@ -1,16 +1,20 @@
-## [2.1.6] - 2026-06-12
-
-### Added
-
-- Support for WoW patch 12.0.7 (Interface TOC updated to 120001, 120005, 120007)
-
-### Fixed
-
-- Prevent redundant auto-sync reload prompt for presets on login (#2)
-- Set Luxthos preset modified date so auto-sync re-prompts correctly (#3)
-
-## [2.1.5] - 2026-04-21
+## [2.1.7] - 2026-06-21
 
 ### Changed
 
-- Added support for WoW patch 12.0.5 (Interface TOC updated to 120001, 120005)
+- Reworked auto-sync detection. It now compares the live Cooldown Manager against the
+  current version of your auto-sync profile - by layout name (a different profile is
+  loaded) and by a content hash (the profile or preset was edited since you applied it)
+  - instead of relying on timestamps. It checks on login and on /reload, no longer nags
+  when nothing changed, and prompts only when the Cooldown Manager is actually out of sync.
+- Added a per-character "Mute" checkbox next to the Auto-Sync dropdown. The prompt's
+  second button is now "Don't ask again", which mutes auto-sync for that profile on that
+  character; un-check the box (or apply the profile) to re-enable it.
+
+### Fixed
+
+- Fixed a Lua error when viewing a profile with no layouts and then one that has layouts.
+- A failed profile load now restores your previous Cooldown Manager layouts instead of
+  leaving the Cooldown Manager empty.
+- Importing class layouts with "Create Copies" no longer produces duplicate names when
+  the same name appears more than once in a single import.

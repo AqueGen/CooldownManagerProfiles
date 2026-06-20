@@ -1075,6 +1075,7 @@ local function CreateMainFrame()
                 end
                 autoSyncMenu:Hide()
                 RefreshAutoSyncDropdown()
+                if mainFrame.RefreshMuteCheck then mainFrame.RefreshMuteCheck() end
             end)
 
             row:Show()
@@ -1130,17 +1131,46 @@ local function CreateMainFrame()
     autoSyncInfo:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_TOP")
         GameTooltip:SetText("Auto-Sync")
-        GameTooltip:AddLine("On login, compares this profile's layouts with your current Cooldown Manager layouts.", 1, 1, 1, true)
+        GameTooltip:AddLine("On login and /reload, compares this profile's layouts with your current Cooldown Manager layouts.", 1, 1, 1, true)
         GameTooltip:AddLine("If they differ, you'll be prompted to apply the profile and reload the UI.", 1, 1, 1, true)
         GameTooltip:AddLine(" ")
-        GameTooltip:AddLine("Only triggers on first login, not on /reload.", 0.7, 0.7, 0.7, true)
+        GameTooltip:AddLine("Use 'Re-check' to clear a previous Skip and check again now.", 0.7, 0.7, 0.7, true)
         GameTooltip:Show()
     end)
     autoSyncInfo:SetScript("OnLeave", GameTooltip_Hide)
 
+    -- "Mute" checkbox: per-character toggle to suppress the auto-sync prompt for the
+    -- current target. Checked = muted on this character; un-check re-checks immediately.
+    local muteCheck = CreateFrame("CheckButton", nil, mainFrame, "UICheckButtonTemplate")
+    muteCheck:SetSize(24, 24)
+    local muteLabel = muteCheck:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    muteLabel:SetText("Mute")
+    muteLabel:SetPoint("RIGHT", autoSyncInfo, "LEFT", -6, 0)
+    muteCheck:SetPoint("RIGHT", muteLabel, "LEFT", -1, 0)
+
+    local function RefreshMuteCheck()
+        local hasTarget = ns.db and ns.db.autoSyncProfile ~= nil
+        muteCheck:SetChecked(ns.IsAutoSyncMuted and ns.IsAutoSyncMuted())
+        if hasTarget then muteCheck:Enable() else muteCheck:Disable() end
+    end
+
+    muteCheck:SetScript("OnClick", function(self)
+        if ns.SetAutoSyncMuted then ns.SetAutoSyncMuted(self:GetChecked() and true or false) end
+    end)
+    muteCheck:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_TOP")
+        GameTooltip:SetText("Mute auto-sync")
+        GameTooltip:AddLine("Stops the auto-sync prompt for this profile on THIS character.", 1, 1, 1, true)
+        GameTooltip:AddLine("Per-character. Un-check to re-enable and check again now.", 0.7, 0.7, 0.7, true)
+        GameTooltip:Show()
+    end)
+    muteCheck:SetScript("OnLeave", GameTooltip_Hide)
+
     mainFrame.autoSyncDropdown = autoSyncBtn
     mainFrame.RefreshAutoSyncDropdown = RefreshAutoSyncDropdown
+    mainFrame.RefreshMuteCheck = RefreshMuteCheck
     RefreshAutoSyncDropdown()
+    RefreshMuteCheck()
 
     ---------------------------------------------------------------------------
     -- Sizing logic
@@ -1412,6 +1442,7 @@ local function RefreshProfileContents()
 
     ReleasePool("contHeaders")
     ReleasePool("contRows")
+    ReleasePool("contEmpty")
 
     if not selectedProfileUUID then
         center.header:SetText(COLOR_YELLOW .. "Profile Contents|r")
@@ -1479,7 +1510,9 @@ local function RefreshProfileContents()
     end
 
     if #layouts == 0 then
-        local emptyText = GetOrCreateFrame("contRows", function(parent)
+        -- Own pool: never share with CreateProfileLayoutRow frames, or a recycled
+        -- bare empty-state frame (no .nameText) gets used as a layout row and crashes.
+        local emptyText = GetOrCreateFrame("contEmpty", function(parent)
             local f = CreateFrame("Frame", nil, parent)
             f:SetHeight(20)
             f.text = f:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
@@ -1810,6 +1843,7 @@ RefreshAll = function()
     RefreshBlizzardSection()
     RefreshTemplateSection()
     if mainFrame.RefreshAutoSyncDropdown then mainFrame.RefreshAutoSyncDropdown() end
+    if mainFrame.RefreshMuteCheck then mainFrame.RefreshMuteCheck() end
 end
 
 ---------------------------------------------------------------------------
@@ -1838,6 +1872,14 @@ end
 
 function ns.RefreshUI()
     RefreshAll()
+end
+
+--- Lightweight refresh for just the Auto-Sync dropdown + Mute checkbox -- e.g. after the
+--- prompt's "Don't ask again" mutes from outside the (already open) main window.
+function ns.RefreshAutoSyncUI()
+    if not mainFrame then return end
+    if mainFrame.RefreshAutoSyncDropdown then mainFrame.RefreshAutoSyncDropdown() end
+    if mainFrame.RefreshMuteCheck then mainFrame.RefreshMuteCheck() end
 end
 
 ---------------------------------------------------------------------------

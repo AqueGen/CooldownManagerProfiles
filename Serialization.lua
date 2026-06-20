@@ -537,6 +537,9 @@ function ns.ApplyImportClassLayouts(decoded, profileUUID, mode)
                     end
                     name = name .. " (" .. i .. ")"
                 end
+                -- Reserve the resolved name so later entries in this same batch
+                -- don't collide onto it (otherwise two imports both become "X (2)").
+                existingNames[name] = true
                 existing[#existing + 1] = {
                     name = name,
                     spec = entry.spec,
