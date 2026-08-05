@@ -21,8 +21,10 @@ local function serializeValue(val, depth)
         return string.format("%q", val)
     elseif t == "number" then
         if val ~= val then return "0" end
-        if val == math.huge then return "math.huge" end
-        if val == -math.huge then return "-math.huge" end
+        -- 1/0 instead of math.huge: deserializeValue runs in an empty env
+        -- where the math table does not exist.
+        if val == math.huge then return "1/0" end
+        if val == -math.huge then return "-1/0" end
         return tostring(val)
     elseif t == "boolean" then
         return val and "true" or "false"
@@ -287,6 +289,17 @@ end
 -- Import: Auto-detect format
 ---------------------------------------------------------------------------
 
+local EXPORT_VERSION = 2
+
+local function decodePayload(str, what)
+    local decoded = ns.Decode(str:sub(6))
+    if not decoded then return nil, "Failed to decode " .. what .. " export." end
+    if type(decoded.v) == "number" and decoded.v > EXPORT_VERSION then
+        return nil, "This export was made with a newer version of CM Profiles. Update the addon."
+    end
+    return decoded
+end
+
 function ns.ImportString(str)
     if not str then return nil, nil, "No string provided." end
     str = str:match("^%s*(.-)%s*$")
@@ -299,26 +312,26 @@ function ns.ImportString(str)
 
     -- Prefixed formats (5-char prefix)
     if str:sub(1, 5) == PREFIX_PROFILE then
-        local decoded = ns.Decode(str:sub(6))
-        if not decoded then return nil, nil, "Failed to decode global profile export." end
+        local decoded, err = decodePayload(str, "global profile")
+        if not decoded then return nil, nil, err end
         return decoded, "globalProfile", nil
     end
 
     if str:sub(1, 5) == PREFIX_CLASS then
-        local decoded = ns.Decode(str:sub(6))
-        if not decoded then return nil, nil, "Failed to decode class export." end
+        local decoded, err = decodePayload(str, "class")
+        if not decoded then return nil, nil, err end
         return decoded, "classLayouts", nil
     end
 
     if str:sub(1, 5) == PREFIX_LAYOUT then
-        local decoded = ns.Decode(str:sub(6))
-        if not decoded then return nil, nil, "Failed to decode layout export." end
+        local decoded, err = decodePayload(str, "layout")
+        if not decoded then return nil, nil, err end
         return decoded, "singleLayout", nil
     end
 
     if str:sub(1, 5) == PREFIX_TEMPLATE then
-        local decoded = ns.Decode(str:sub(6))
-        if not decoded then return nil, nil, "Failed to decode template export." end
+        local decoded, err = decodePayload(str, "template")
+        if not decoded then return nil, nil, err end
         return decoded, "template", nil
     end
 

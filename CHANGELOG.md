@@ -1,20 +1,15 @@
-## [2.1.7] - 2026-06-21
+## [2.1.8] - 2026-08-05
 
-### Changed
+### Added
 
-- Reworked auto-sync detection. It now compares the live Cooldown Manager against the
-  current version of your auto-sync profile - by layout name (a different profile is
-  loaded) and by a content hash (the profile or preset was edited since you applied it)
-  - instead of relying on timestamps. It checks on login and on /reload, no longer nags
-  when nothing changed, and prompts only when the Cooldown Manager is actually out of sync.
-- Added a per-character "Mute" checkbox next to the Auto-Sync dropdown. The prompt's
-  second button is now "Don't ask again", which mutes auto-sync for that profile on that
-  character; un-check the box (or apply the profile) to re-enable it.
+- Support for WoW 12.1.0.
+- Adding a template to a read-only preset now offers to copy the preset into
+  My Profiles and add the template to the copy, in one click ("Copy & Add").
 
 ### Fixed
 
-- Fixed a Lua error when viewing a profile with no layouts and then one that has layouts.
-- A failed profile load now restores your previous Cooldown Manager layouts instead of
-  leaving the Cooldown Manager empty.
-- Importing class layouts with "Create Copies" no longer produces duplicate names when
-  the same name appears more than once in a single import.
+- "+Profile" in the Template Library no longer fails with "Profile not found."
+  when a preset is selected.
+- Import now rejects export strings made with a newer addon version with a clear
+  message instead of silently accepting incompatible data.
+- Exported data containing infinite numeric values no longer fails to import.

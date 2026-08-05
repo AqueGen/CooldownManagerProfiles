@@ -1717,6 +1717,30 @@ end
 -- Refresh: Template Library (right panel)
 ---------------------------------------------------------------------------
 
+-- Defined here (not ProfileStore.lua) because OnAccept needs the UI-local
+-- selection state and RefreshAll.
+StaticPopupDialogs["CMP_COPY_PRESET_ADD_TEMPLATE"] = {
+    text = "CM Profiles\n'%s' is a read-only preset.\nCopy it to My Profiles and add '%s' to the copy?",
+    button1 = "Copy & Add", button2 = "Cancel",
+    timeout = 0, whileDead = true, hideOnEscape = true,
+    OnAccept = function(self, data)
+        if not data then return end
+        local uuid, count = ns.CopyPresetToUserProfile(data.presetId)
+        if not uuid then
+            ns.Print("|cFFFF0000Error:|r " .. (count or "Copy failed."))
+            return
+        end
+        selectedProfileUUID = uuid
+        local ok, err = ns.AddTemplateToProfile(uuid, data.templateUUID)
+        if ok then
+            ns.Print(COLOR_GREEN .. "Copied preset and added template.|r")
+        else
+            ns.Print("|cFFFF0000Error:|r " .. (err or "unknown"))
+        end
+        RefreshAll()
+    end,
+}
+
 local function RefreshTemplateSection()
     if not mainFrame then return end
     local right = mainFrame.rightCol
@@ -1758,9 +1782,19 @@ local function RefreshTemplateSection()
             local tmplName = tmpl.name
 
             -- Add to profile button
+            local targetIsPreset = ns.IsPresetProfile(selectedProfileUUID)
             row.profBtn:SetScript("OnClick", function()
                 if not selectedProfileUUID then
-                    ns.Print("Select a global profile first.")
+                    ns.Print("Select a profile first.")
+                    return
+                end
+                if targetIsPreset then
+                    local preset = ns.GetPresetProfile(selectedProfileUUID)
+                    local dialog = StaticPopup_Show("CMP_COPY_PRESET_ADD_TEMPLATE",
+                        preset and preset.name or "?", tmplName)
+                    if dialog then
+                        dialog.data = { presetId = selectedProfileUUID, templateUUID = tmplUUID }
+                    end
                     return
                 end
                 local ok, err = ns.AddTemplateToProfile(selectedProfileUUID, tmplUUID)
@@ -1772,7 +1806,9 @@ local function RefreshTemplateSection()
             row.profBtn:SetScript("OnEnter", function(self)
                 GameTooltip:SetOwner(self, "ANCHOR_TOP")
                 GameTooltip:SetText("Add to Profile")
-                if selectedProfileUUID then
+                if targetIsPreset then
+                    GameTooltip:AddLine("Preset is read-only.\nClick to copy it into My Profiles\nand add this template to the copy.", 1, 0.82, 0, true)
+                elseif selectedProfileUUID then
                     local profile = ns.GetGlobalProfile(selectedProfileUUID)
                     GameTooltip:AddLine("Copy this template into\n'" .. (profile and profile.name or "?") .. "'.", 1, 1, 1, true)
                 else
