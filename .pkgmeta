@@ -1,11 +1,14 @@
 package-as: CooldownManagerProfiles
 
 manual-changelog:
-  filename: CHANGELOG.md
+  filename: RELEASE_NOTES.md
   markup-type: markdown
 
 ignore:
   - README.md
+  - RELEASE_NOTES.md
+  - release-please-config.json
+  - .release-please-manifest.json
   - CURSEFORGE.md
   - .claude
   - .gitignore

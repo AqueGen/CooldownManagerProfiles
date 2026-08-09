@@ -21,8 +21,13 @@ WoW addon: save, switch, and share Cooldown Manager layout profiles.
 
 ## Release Process
 
-- `CHANGELOG.md` is a **manual changelog** used by BigWigsMods/packager for both GitHub releases and CurseForge.
-- Before each release, **overwrite** `CHANGELOG.md` with the notes for the current version only (packager uses the entire file as the release body).
-- Do NOT accumulate old versions in the file — only the latest release notes.
-- **NEVER** delete, force-push, or recreate tags/releases. CurseForge picks up every tag push and creates duplicate entries that cannot be removed. Always bump the version and create a new tag instead.
-- The `## Version:` line in `CooldownManagerProfiles.toc` is the **source of truth** — bump it before creating a tag. `version-check.yml` fails the tag push if the tag and the TOC version disagree (a leading `v` is ignored on both sides).
+Releases are driven by [release-please](https://github.com/googleapis/release-please) from **Conventional Commits**. Nothing is versioned by hand.
+
+- Write commits as `feat: ...` (minor), `fix: ...` (patch), `feat!: ...` or a `BREAKING CHANGE:` footer (major). Anything else (`chore:`, `docs:`, `ci:`, `refactor:`) does not trigger a release on its own.
+- On every push to `main`, `release-please.yml` opens or updates a **release PR** that bumps `## Version:` in `CooldownManagerProfiles.toc`, updates `CHANGELOG.md`, and updates `.release-please-manifest.json`.
+- **Merging that PR** publishes everything: the `v<semver>` tag, the GitHub release, and - in the same workflow run - the CurseForge/Wago upload.
+- The packaging job lives in `release-please.yml` on purpose. A tag pushed with the default `GITHUB_TOKEN` does **not** trigger other workflows, so `release.yml` would never fire for a release-please tag. `release.yml` is now `workflow_dispatch` only and exists for manual builds.
+- `CHANGELOG.md` is **generated and accumulating** — release-please owns it. Do NOT hand-edit it and do NOT overwrite it with a single release's notes. The packager gets only the newest section, via `RELEASE_NOTES.md`, which CI extracts from `CHANGELOG.md` before packaging (it is gitignored and excluded from the zip).
+- Never edit the `## Version:` line in `CooldownManagerProfiles.toc` by hand — it sits inside `# x-release-please-start-version` / `# x-release-please-end` markers. The TOC holds bare semver (`2.1.8`); tags keep the `v` prefix (`v2.1.8`).
+- **NEVER** delete, force-push, or recreate tags/releases. CurseForge picks up every tag push and creates duplicate entries that cannot be removed. Always let a new release PR produce the next version instead.
+- `version-check.yml` is now only a safety net (it tolerates a leading `v` on either side); release-please keeps the TOC and the tag in sync by construction.
