@@ -1,3 +1,12 @@
+# Changelog
+
+## [2.1.9](https://github.com/AqueGen/CooldownManagerProfiles/compare/v2.1.8...v2.1.9) (2026-08-12)
+
+
+### Bug Fixes
+
+* update Luxthos presets to latest 12.1.0 layouts ([#4](https://github.com/AqueGen/CooldownManagerProfiles/issues/4)) ([7a4623b](https://github.com/AqueGen/CooldownManagerProfiles/commit/7a4623b99b102d9bae8d2364183d74a90e5351b1))
+
 ## [2.1.8] - 2026-08-05
 
 ### Added
