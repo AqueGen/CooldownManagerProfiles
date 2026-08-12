@@ -20,7 +20,7 @@ ns.presets["preset:luxthos"] = {
     author = "Luxthos",
     url = "https://www.luxthos.com/",
     -- Bump this timestamp whenever the Luxthos layouts change so auto-sync re-prompts.
-    modified = 1767225600, -- 2026-01-01 00:00:00 UTC
+    modified = 1786492800, -- 2026-08-12 00:00:00 UTC
     layouts = {
         -----------------------------------------------------------------
         -- DEATH KNIGHT
@@ -29,17 +29,17 @@ ns.presets["preset:luxthos"] = {
             {
                 name = "Luxthos - Blood",
                 spec = "Blood",
-                data = "1|VY67SgNBFIZnxsTCGO0G/2lmZdKJb2AatbMQ0oSUC4oJiNusilaGBISApWC7SAJ5jLBVgsRLfIRYZHM13sBKziSNzffxn8M5/OXYVbCWDuKluy20qpAT5BaQi0GO0ZxA9iCHMGnICPoJ+hEmAZOEbismdnLQrzDL0C+QA5hVmBWEt+huQHegnxXj7gimqhgvnMI0yGcw+4qJRJ3COeGCPrURZihc0k2kGO9XCFmkpGJi6YHGA5gaeUh4J3wSvgjfhB/Cr2K8O1WMv10rxqMbAkW3T/ggTBUTSe9elP+PR3bnFKE76xVbyvZASsI0EGZsc97P2kK2i0jUa5C9YknwRcho7uHc45lNeubmxDqI+7uHrp939k4KR3nf2XS2jz3v4A8=",
+                data = "1|PdA/TFNRFAbwc0+pohVluvE7Dq96WRSJTG5d0M3BhEF8YxNbSmLsYNXIJNZAQuJoFLfGQNLNyYmFdEIJ/oHNFQZaChX/RSfzvb64/L57b96978t5ln3SOFtoZOuvbuH9MnwPcQbxAPwh1nvwe/BdhAJ8G9EnRB8RcghDiDZN9FqMaBvhFPw+oi8IZxBOo/UCO6OIthB9NnHFAxMtrSIsm7iZBwhrzIcIN0001+TmEXnM5zbRmuRmlhfbJq6zSKYw4k305AaP9xFWmF3yjfwgP8kv8pv8NXE7RyZud8HEtZ8TbosdE335jqvv5MhEh6om+nXbJDP4lmX/mGj5KrlPeFbumuh02UQr58htEpvo0q6Jvr5skjkxbJI5/oFs8KmL5BK5QsbJKOHHg2O8ceGNzv+v00k7aWk1LeaKB/mnSStEW+cXkwElM8GIR1hDazKZoutMpcPRXBNhpQm/N1dXdwy+nWY3zcN+hkI/44F+rveSTP44V9esS1okq0a2dr1UrFXyN+7NTFdq+bH8xN1q9c4/",
             },
             {
                 name = "Luxthos - Frost",
                 spec = "Frost",
-                data = "1|NY/PSgJRGMW/O9hE9QB1Li0mWtcmoVZBGG0MUnuCFpXyTQk6YLTKjJZRUGpB5hDRUyQtonqCdm3Fv5AVUVkQ34xtfudyuZz7O3uBHXdk1jVzxTnYJvgTG9PgGrgNux9cBzfATXAL3AF/gbvgFyQ7SL6Cv8HveJwB/4J/UA2B3zSp0zLuu5pUZBm2ATugSSXKsPskSwJXcCE4h02aVD4oqGhS0ZgmdXKtSS3VpGJL7gY0qeKt4EiTKoxqUrFBwZQmtX8o74bkdKNJHd9JwaK8Cwu2BU/SkpECkSjKb5FJTepsTfCMhw9NqpQSpDUZ48OXxu7/BiuLamjswBf1LDzHaMZfVhj1l3kG+aBf5bl7KzzjfOUKXM/mDGWCG71s9rLVy7aXrunMr644cSu8mViPO9aEtZBKpp0/",
+                data = "1|VdBLL0NREAfwObfaKh9AZ2JRrLwlmrCyqdgg2ooPYIE2c2miTYiVusJKQkI9ErSxYOkLKAspCWs726baSrwiKInMaSOx+c2c5N45Z/7L9sWUuy/lsHb8aDqQP3C6h8DIjiHnkB/RdCI/IOeRC8hF5GfkEvIn8hNGnjHygvyF173Ib8g/yN+Y9SG/YqZEoPyjwjyB2k2iaaBZRaDCSeFASAmHwj6aQKASXiFNoAJBArV1TKBGcnJ0EaidC2GDQG3XE6hgjdBNoFbW5Z5a6c4I1Oal/Dsk3w0KC8KdTJmTAXbBi6ZUfweB2psU7vHqnUAdzApRAqOpjsCwzgls1acExqpbumECm/NGuJVjs9AidApdQqvQJrQT2FyNR4b1Lw7Pkh6JWV/DWnltvZjeODBXDkkvqDdKeMvv0jHoQHQCifQJ8kPcMpQDOV+phUotVupjuWZKccuwK/2Cv25edylHrH9iPBbyDM6Ep0IxT7tnYDYSjf0C",
             },
             {
                 name = "Luxthos - Unholy",
                 spec = "Unholy",
-                data = "1|NZE/S8NQFMXvjaEKWhXR2vNAjG4OfgaXIgU3Qerg0kHaam4yWAU3a13F2tY/oCJF/AbioF2KSz+Bg4NbC4ogjqJUvUldfve8l5z3zkn27J1afK5mF08TkDhkHNIP99sQZ2KQFJp1uB0IGeLRDMSC9EFsyAC8N8ggpAe+D/8GEoX0GuK1V8gwZAgSUU/OEJeeDfFByxAfrqBVgoxAYoasmS3dmjDEiy+QMTW/6+JW1cefu8qGuLKhKqnqTk9cN8ST86o8hWuIow11fOlSFBVDXG4b4ty9om7Imn7UB1XFkeJYcWKI058a4kzxpDYolhWXeq++fP5giC9+rrgQNHJ2w+8wtR+GLreDOmHabp3/tEHQahIy0m0Slo42ruF2CkWLIxDqzlQ4m/VgBn9AFdfszcRqOp91FrxcJpt3Zp0lL+u7278=",
+                data = "1|TZK/a5NhEMfvLmkbqbVSNPYOSqNbq0UR9y4iVTehtJZQySBJ9L03Q6viIJjGZsig0f5AUJGAk1OH0sF2EZeC/gUObhG0goiTKNV+n7wFl8/d8+OO732f50HX/dbgeCtdezqjPqh+TL1Xoz9GXMyqT6mLbm9ptGsktXvqZMRHiupp9UPqBzX+pp7SSkUr6+p9Rnzjq3rGKJVZU+9RP6zej5KyereR7MTabuL0nBEPX8D970Z85YuRXMsbSb2B5QYOfqDuJhADEfZ+I3NgyYjLm8iWgRVg1YgLv4y4+cmIH7XVs0b8eAjIA8+Aj0b8RIFp4CXw2YiX5vZ6LDMwgeUbZOj7/J0Rv/hrJCO3jeTiHSO5mgYuGUn+rJHM9mOArJEUJoxk8acR971VH1A/aiQzeaNUz3vgA6YfAUaB08AZ4CQwBpwySh048YqrwThZSBpIvZFbSJzNHH8YXAztO/KDcsz6nw7oDeYmI80FWcF69YHXGu1Wa8KsTojd6pLEqU7c3urEdrNaky4OnyJUhOdK9qTe2M924pC10rfOXy/Ml3KX43KxNJ8by03GpUp09x8=",
             },
         },
         -----------------------------------------------------------------
@@ -49,17 +49,17 @@ ns.presets["preset:luxthos"] = {
             {
                 name = "Luxthos - Devourer",
                 spec = "Havoc",
-                data = "1|Pc+9SsNgGMXx502Km7Vj84KQuucqzOBNtAghYxKNiVFcDCmkHXQrSLcEr6J+QO5CwRuwtl28gfJ/hy4/zjnwDM+099gMHxq7evGcTrSoywISqJ1OOZ2tRZ21Wiz/hzGDG7iGHGZwBXNIuViSIoih0aKCNfzBBraw06KeVvAG7/ABn/AF3/CvRT0fQx9OYADnMIYJ3MG9FrU4BWrw20ppvhqVpr6al8rKUkdmPqTikGqTGrvwwyiJ3Ys8zsLU9Vw/vE3yNEz3",
+                data = "1|PdC7SgNREMbxOXuImsJL6Q4E1nRegjbWFm7hSyjCsmUSXROj2LhGiBZaKAvBbkUbLy/gDVLrAyj4AsZLow8g/0XT/PjmMIc5Z3Zz2+noVmqb7Tm3IypmuQFVaLkdo2KKp27Hqjj+K4c1WINVqMMerMA+RCo2X+DmCWUZKiom6JJS0jt8wCd8qZiDG7iFO7iHB3iGF/hWMYeDMATDMALzsAhLsAGbKibhGQll8KbiHCcwq2IHflScowu4hCu4VrH9j/BEyzhMwDTMwCRMQYlfFs8kzvbl7Px/Ouh6cTZgLM7GnmcrjJuO6cs6e6nRS62/ZPOFuOnkTGobfliuVryFeqUWRl7J88P1aj0Ko18=",
             },
             {
                 name = "Luxthos - Havoc",
                 spec = "Havoc",
-                data = "1|Lc09S8NwEMfxu7T4AoSCv5viKGhfhUNdXLMatEhDH0CiUF2McRJfgEvuEgTrlFkHXTpXV/sehC4iPlHlX7N8vndwcOf102JlmKRXTegD9BFlAJ3AOrALWAR9ghpsBOsim0NryH6hBPWgTWgd5TKyH9iJEH9tOwrYPfIX5FMUDSEOYyHe33GEbh06joX4Y89NqRDPa0L8uQ67E+LXSIhna0L8FjjGQvy+5bh0PLvTW8f3NSUoA+8MRQP5dDVZPLuBWpJ6vASd/Nc6VaOq3aqjRZN4s90b9P3WYT9uH/gbfis8Guz+AQ==",
+                data = "1|Lc89TwJBEAbg2T3xozUhcabxtENA/REU2NjSelFiIAjGnCZo43maGGNtsGCXKwxUxNgAhRZaKtjqD7AzsUGiaNDMQvO8u8nuuzvHocNgpuj5pQSqW1R3WE+haqPOoD5DnUVdRaVR57A8QGVh+Q8VoJKoFlGNYX0aVQfLv6gPCER/lQkIrMku6haBvDhlGlh5IZD9awzCBMJxCcTmGuPwtsjsE4ivDV75BGJgEYjvGIF4zxKIjwiB6D4QiN4Kc84885Ea80Mgm/cEshRl+M3SG4G83CaQrTjqJoH8vCGQvVkCayqElVcCa+KReeLvRpgFZolZZqJMjInzpfkr8LCeEh6qjjwx45gBh+0XDQzCtmdGnzsy/cJxa6i050sxjqo9TJ0ZZXaUuVFWTZpGz5chYTrNynMT6a1C3k7u5t30jh23k85eYf0f",
             },
             {
                 name = "Luxthos - Vengeance",
                 spec = "Vengeance",
-                data = "1|LZC9TgJBFIXvjujqG3CmWhurM6GxtrJQbJxC8CdAVrIqBWs0GgyVLAivYGsgoi/gA1hb+hzGisTERDOz29zvzrm5557MqHT/VO5ni+HjJuwF7Bh8hp2CY9gO2AQbsDOwDbbAEUwVfNAS/E5d2QeHYAaegIfgKXgA1sBjsA4egbEWVapoUUsbWpQ6A+ewe0781qJk103etajgR4uqbqH3ARNqCeI6zBp6E/BFS/DXd1IL5lOLWh7ArGpRYdc9vlz35pavZpKBYx9LZeDcO0ZZHnl94ldyv7juE8CEuVWp8go2BkMVrIDNgq2C7YKjnLZTcObpz7ku8J/itWxxV95OupdptHOb3iTXkYlqSXqexGk7+Qc=",
+                data = "1|NZFLL0NhEIbnTNGKFSvvrMpCgjkhsbeycNk4C+oSmmoOulAhhHTFaZXEJexsSETj8gf8AFuW+BliIU0khMzX2jzvZCZf5n3nKzXuXLUXomrxfBjBMoIy9AbBNbSMIAedh84hqECz0DS0BH9UKJb4FPK+rw3j0CI0gs5Cp6AL0AnoJHQGmoJOQzNCHOsSYl6E3iIYE+KGDyGmEZs8CrH3ha1nIR4dhB8X8jIp+M3Y2ofeCXm/BWul4b8IceMu/ITpuxDHH+zRmhAf2+z0TYjPWg1tQnz0Y4MBIT5psSpneBXiw6oQP10I8filUCz+ZHi2WN2GHkOfod/Qa1CDLxRr7qxQBC276BzVTOttsvh/GOhex4F5W3Hu3QoXKF4z7qI39N1D53aL7DVB5+uarmu2rqWaBrm6Vpy6xVZ57gtcL6putw+FK6v55PBmfiNcT/rJyTC/FGby2fAP",
             },
         },
         -----------------------------------------------------------------
@@ -69,22 +69,22 @@ ns.presets["preset:luxthos"] = {
             {
                 name = "Luxthos - Balance",
                 spec = "Balance",
-                data = "1|NdG5SwNREAbwN08RLEynzDxUVlAro/+AWmRtFLEIGrSMOUCIiQbTG5MueBQWki5sYzCtBGw3jRek9oCIFimj4oGVfLuk+X0zy7DD7BZ79yucyRfOVo2ijYBRtP7HCU6iq3CNm+yywxEuS7vO70KaP4SOhY6E9oQOZWmeX4SqQizUI+QaRakLoYbUT42ipyrHOG4UPV4ZRa0SL/OKkC16QHSAc1gyZBRtz4I5tIOoIiANMmAH7Ipew0ADG66NoocWqjtwD27BDUa9uWEwAkbBhFG0+Qre0E6CKRAE02AGjOML/Irdb5QOd/C2rNglPPwxip4XUX2DT/AloROsrUnoUuykUNDRBzjSKvr3dq8fK+JaHe50rzjnSL6gqY/Lfjh+1Pxw/Wh6Ie26l94v8ap8ZiGb24pbQSsUTUXTscQ/",
+                data = "1|NdG5SwNREAbwNy94FaZTZh4q0ULwWPUPUIusjSIWgkFLYxQETUwwvTHpgkdhIXaSSkwrAdvYaCKkTVRQtEjpgQdW8r2Nze+bHd7u7M5mmnZOOZZKH4eNoiW/UbT4yysc4VVeQ+eU81zhIuc4xCdSL/CbkOZ3oQOhfaFtoT2ZmeQnoTMhFvIJFY2ijXOhKykcGUX3Z0bR3aVR9JjlWZ4TckW3i8as8AsnMaXTKNocBxO47EAVAlEQA1sgLnoBB64w4tooqj2iKoNbUAI3OGrPdYFu0AP6wTBwwAgYxSf/iNtmlJ5/xZ0JcbNofhtFD9OovsAH+JTgoQQvxMVyws9G+VpnhRyj9G7BKF2poVNFVUUVB+i1lEAZlwNgEIyCMTAEhoFjlK+tL6cz9vnYl50RSNv9NTbpa632Zuz7/u+Dk3kOpdKamvnEi5wXeS+KXlRsCLmptG4i0e2N9HvprnlZL9hz9v/bKhWbSiTXIwEnEFzeWI6urP4B",
             },
             {
                 name = "Luxthos - Feral",
                 spec = "Feral",
-                data = "1|RZE7SANBFEVnlpkNpLGRxDvVxj8EGyubdFGwFZVYBhVRE9CAoCKiieAn4A9NrIS4aiVa2vgprUWw0DQSQY0WVgE7c9eAzXl3uG/uvMesqKVCw1S6kjnoN0IGdo2QsXuqPagHI2SpCzoC7YMGdJjGjhEy6afaN0LGT6HmoFahFqCyRsjJc6gNqDWodSxaUPNQBRxOo/wKNQvlGiETIahjXJaMkMUhI+TzRDXopRM6C+1Cf8POGyHHJOwcA994qKc64+VWooloJlroCroXRsinbap3okx8suWO6oOqnWNfE1fEDXFLwzHC6uut7jtcZPMXuusQHaDThugg23i/+EPF4ACDY9wg2MguIhgjNoktgqMkjwgX+hG2H3bEtdJ/Ozrp/8VDGe912DnY+RNo33LGkjY0ajVcqxGvep/iqXQlGU3NjI84HU7PaCqe+AU=",
+                data = "1|NZBPSJRRFMXve/PeN2kLN6Keuxq18s8kSSs3sxuFtkEyLqVCSgdSEFJE0i+wEirFP60C/UIRxDb92VQuXVSICII6m5igMheuBBeCnuFz87vnvXPv4d331D9ZqHk0fhy+6VExVdMqJrdFNQO3rWKKbfAZ+CQ84NM0plRMvpxqVsV0L8ENwU3AjcBNqpjeNbgXcM/gnmPUwg3DLeBtPw5+wz2Gi1RMXy3cO3wuqphCl4rZf3ge9OsmPOerc/AR/BGCeRXTYxDMMfUPD5VUq0y4RtQTV4irdIXuexWz95rqL3FA/GfLBtU/qka+/SvxhfhGrNNIqdjbt86Xvltg8yHaK5C9Q6cB2U62cb5wQsXgKgbnuEZ1HfGSeEXwAflFIoLfQVCOIKNiPxpCVOyHFRX76bJK4tKuit38SSOnYidOeTdK7Kkkkt+JHzw2Ec3EDaKVSBPXiRaVRFldZMP4C4/go1QY51/8cG1Y2hDBHIL5ZfjkWGhNAI+4puOaievkWGi9KSVeqGJbyRs/zmcHBh/cS7WkOu4PdPedAQ==",
             },
             {
                 name = "Luxthos - Guardian",
                 spec = "Guardian",
-                data = "1|NdE9SwNBEAbg3U0wm7s0AYu8g8UJomksU2hjIx7Y+hXxgwukiYJoINiJuWiTxN5GJIWof0IstLK3scinySXnT7DQuUua5x2YvR127ip62UidNSKV23Vk35F9IyHjCtojIWM+dIuEVL8waqhmYNQRT5JQax8kpHPEHJNQqT7jMUNmRELqJIwFGMvQHeg2dB/nc9Bd6B4u+MMYH4oNoZucHnQUekRCbSzxDT8wbqB9WCswBjxmk1suEg4SdzAdmDYJZU9za4vZYbLMLrPH7DMHzCEJWXhhXknIL+IRTabFtJkO02V6zDczYHwSCmkSij5JqJlH5omEmucj6Xu+fvtBuMG6gtVId/IC5QZdGAOrHKxk9hqmjYQTPsbkxzxDt8oVJaegvTDjyTCN2jjrYVYzQQb/Y1LF/HH1PzeoGpHT1WKpkLcWLbuUK+YLuZM/",
+                data = "1|RdK/T1NRFAfwc+8De99rlyYO/Z44VCO/Jbow6OJi7B+AkZ+SR8JSSAhgCJuRljgA7i6EdDA6ENgcjYNOuMAmDJQf0kLZgI0E8r0tYfmcc8999+bk3LfQ/LGUmS4FxS+D6P+D/t8qJrQq9sc6XFXFJGpwZRVjrxAtqdjXm1jsQbSMMK1i4gkVm6mSE3KqYlwaURuiF3AHcPtwx5h7DHcId4QP47yRHyVO4PYYq3BNcKcqtvc5XA3Zlyp2+5J396kEYYCowsUb8hapGKkVJGMkcyo2d5/VATJEhsk7MqJi8j/JLxWzq2xuj5TJPjkgh+SI/CcVUlOxD76R7yq2lRvtqyp2q1UlcP94/TibPGethdmFit14z91r9izEkCbWdlSCxCb5y2UH6SRPyTPSRZ6Qbh579FUK/g38AxjmmTNEn+2Cn8LdhBBVsgU/c9/aw09I5pCKfTv1QXGwhTW48nzRmntw1XoM0/UYLTXicj0u9vjoH/w2S9Rus7hvvmibjf8NGjW7fdmoBWHgs1Iw9WpmNj+W7c7mZkdnxvKjkzc=",
             },
             {
                 name = "Luxthos - Restoration",
                 spec = "Restoration",
-                data = "1|Rc7PK8NhHAfw5/u0nNy398Nhz/NYubigUSOEIUwcnG1taq2strnvh5Cjk+taDvIHuDhxQCmGEQr7clb+gvGe1S6v99PT59eWJ1/2Zcqe0sE07B5MHsYLE4JRMIDxwVaVcKJ35JxckgvyQF7JC3kiz+Se3JJ38kiuySepEZd8/FHf5usNehx6DHoOehY6DD2DRgV6FHoejW/oCehFJeRyF3QEJ2ElZH8nWSL7pAYbga0r4ayvoveGU7/IFZfsKCEHusmREnLwTAkZTCghh4JKyOFJ2BH0uPg5RSClhBNzYddYcsyVcSXkglMRBdiqv9g+We+2S9j6PyOQavY6MfcQxlsoSacDxsd0YNBK1foPNbPsyU5lNpNxf59/JZHNpTPRXDK98Qs=",
+                data = "1|LdBNS9RRFAbw8z/jK7R3nmOLufc/gqaiVKhgkpJYvo3oojYtGtFABhRG3TvMYNrSldtBbOMH0EWrWlQk+IaKBupMri37AuqTs/mdey/33vPcmytfyEfT+bLs6luEH+EX4GvgO+ENHvBRhHsmQXKffCXfyTfyi5ySY3JCDsguOSdHZJv8JoekSC7uKCxydAbXDfccrh/uFVwf3EvcrMF1wQ3i5gquB27YREdr4RLY7DPRxw/ICFkhhwgTCAsmwfvXJtq2gfodXn1JfrDTBxN98tBEn37hhkkTbW8z0Y4XCJ8hXsT1Z9SlEL5jowkTHQpM9LjKJFJ1Qvo5rTbRqwgZMNE/cZIy0b85E71+Qy5N9F8j2eKxQXJqosvrJpHKn2Sbaw3kEWkhraSRNJFmk0i1X5MMwr1YrtQ/SJ6V4gSFRbfE4HUpBo/zR8eL/6PfP2F5/RN8TSarQQV8lDWAR6laab3zvoaJTFbLg3zZbG96fmoi1hwbm5ydm0kn56Zmpm8B",
             },
         },
         -----------------------------------------------------------------
@@ -94,17 +94,17 @@ ns.presets["preset:luxthos"] = {
             {
                 name = "Luxthos - Augmentation",
                 spec = "Augmentation",
-                data = "1|NY69TgJBFIVnFnNeQc9UGGsTGgsrQ+ETYK8QVyVGlhhAjY0btPEJ0ETNxsbOl7Ax9IA/uwYVFiRqY6jNXYbm++beO3PPnM6cBHNnQareWGK4TgyIHtEnYqJNtIghMSI67C4Qz8QHERFvRJf4NcpZOyZejXJWHoiQ+JTWPfFilM7HggHxbpT2GoIL4ofho1FO9ssovbEszWvim3gySu/UBAdG6cLYKF3OyfhPTrNyuyjlpaAp5ZZgU+DKs0PBkUyvBDeMMrfaT/7h+Iwy8+fT2MkOiZ3uKucmH0hyksTC+I5o+XVHg2hbd6x71n3r2HpoPUocpKqrNW/X3U8vprPV7T23VMlXil7pHw==",
+                data = "1|NY+7TkJBEIZnFzOvoP8kJtjZkGBpYZQYnwB7hQSVGMEYQI2NBG18ArznxMbOJ7DTwlhpIuAFFOFwkaiNoTYDh+b7dmZ2s//sDe06I/uOL5efQXkB3AK74Aa4CS6CC+A2uAMugV/ANXAF/A6ugn+F7PwO+E3ITt+Ay+C6tq7Ar0Im0lS0wJ9CJplXHIJ/UL4TsqEvIbM4qc0z8Df4WcisZBSbQibaFTLrYR3/6WlYb8e1PFLca7mkiOmLLcW2Dk4V56gEhey1I2Q/RoWsS0K29aQoCNmTgJCtTgjZ2rjiQfEoZOuzenlKyB7fXphsbwebRSU4djCI3P9fIw9y9AOGeyn7a0S7l+BCNmcNg4ueS55dzw3PTc9tz52eHV96LpNcjW34A/5QenktlkhFUvFk4h8=",
             },
             {
                 name = "Luxthos - Devastation",
                 spec = "Devastation",
-                data = "1|TdA9S4JRGAbg84g8QXvRfSZrzqmGykpIW9r6A4mDRQQpJUZbb2+8Y2Q1tAaGfSwODUoKQuVXFtkPkJf6Ea1xl0PLdZ8PznPOc46CB5djruNexOHtw1uCVqE1aBlagdatkcyCNdIpwitxMgptMueh79AXaBf6hqFh9L+hbe7MkjlrAtE8tAPtoX8PbaG/Cv+ZezMkYo18fkEfoU843oM/AV+skY2iNbK2Yo0kRsg6/BiXr8ktuePxE5Inp+QM2oBf4PDcGmn0rJEmr2g9kKo10l4kUfYyRaYJq3ZuCEt3J0mYJMiHNfIaLIj7vy3JRAIu3+0XoI3Q4d+neKVxB37sClp23IAotDLI6iBrg6z/ppNdzqW3UjuhcCieyiV3s8nsZnr7Bw==",
+                data = "1|LdC5S2NRGAXw777o51IKiuerop1LUNBi3MGlsdG/QLFQEUEHJyh283ghduKG2AqBuDQWFooRBPcYRS0s5TEzhf+B2A3nmeZ3uAfuhXtSpb93awM/2BlFehnpfmgOeg49gZ5CL0zczx4Tl8+aeH3rSB+xqYHeMruhz9AC9AlllXj/hN6z7oDmoS94P4beIbxm94N0QS+hVybuz1+sLiGsR+hM3HTWxI0Nm7jxajKFcID1Hjkgh7y+RtbJBtmE3ph4X/sIMzxvmbjbLhN3d0ZyJu6+l/TxA22knfDV/D7h04VmkiDj5NXEPZaYeP9WTLyPbZNY+Qh5M4lVVJnEyh5IgV0DaSQtpJU0kWaS4I36jAuiUUhntIIXRDvcIMzEU9Gu36Ny3Fj5W52PcCALPfEDzyn0tJi5Yp4X86KYl37glTroVZR+cmhxfnZyIZ6ID04uTvxKTiRn5uf+Aw==",
             },
             {
                 name = "Luxthos - Preservation",
                 spec = "Preservation",
-                data = "1|NdC/T8JQEAfwe71GGTEhxu9NsDngBoPGiMS4OahxEhEwloBogaLM8mMwDs4mDIQ4sLBp4l9Cu7E6sTiwkKh5bV2+n0sud+/y+ubjaKPfXfRed8HXYAtcAZfARUTSiKTATbgz8AjuQEipGLgAToLLQurCETIyv0LG/g68BPgZfAe2wQ2sboJr4FuY6/DG4BvMPzB/B7fADngppPJJIWV7MI+E1Nq3kCpeCalKDssX3c4JGdkMlttC6vxHSOU+9aMx3fvS1YGen+iY6nBhVoVUY08vyeu4FFL1Mx2niA61J2+qA29sdBAdJp7+54NN02Dedv0l/hFGNjMBJzs9Q62AC6HF0FJoObQZOgqMpELTge4gdObrf6dfdRcPh+16zXLiW/Fjx2pZTrt0X63bfw==",
+                data = "1|RdC/S0JRFAfwc+95lKOBRN8z6dZgmw5FZBFtDQVNmanRE83yx7Oc88cQDc2Bg0iDi1tBS079DT03p6DJpcFFqLjPBy3nc+DwvV+4beu2t9JuTluPm+BzsA3Og7PgDAJxBGLgKtwxuAe3I6RUCJwGR8E5IXXiCOnEr5De3sAoAr4HX4FL4AoWV8FF8CWsZYz64AtMXjB5BtfADngmpFJRIVUawdoXUkvfQipzJqTySXNLCumdBGbrQur4R0glX01jyNy+zLZrwgMzPsxwYRVMOGXGqZAqHyHYNR4K6WFRSL8NhfTn+5NqYNTXDQS7kTuvxcv/PwergNmDkKpseUUDcLTR0moBnPbN+GZ9c75V397cQMw3Ptft+I49vQ/1tub0Zq9eLtpOeC184Ng126lnrwvl0h8=",
             },
         },
         -----------------------------------------------------------------
@@ -114,17 +114,17 @@ ns.presets["preset:luxthos"] = {
             {
                 name = "Luxthos - Beast Mastery",
                 spec = "Beast Mastery",
-                data = "1|Nc47LwRhGAXg95uI+AnOm7x8ik00Ej9AQjaIwrrFpWQwBYViZ8jMZ7BjtyCISqIiy+4f0GiIH+JaqF12aom8Es1zipOTnFpbpd7ZnVXPB5DeILlCcsvkFS+ZvP57OAsZh8xDJtCKIQvIP5B/Ig0hM5ASZA5dBJmEzCL/YjLDgocLJnM4BJmCTMM1UGih8I3CX70G19Q8ZTIjP0xmtJfJrMfKtuKUVNlRdpU9pcJk4kVlSVlWVpRV5Z3JHDwqT8qz8qK8Km/6aJDJHN0xmeMzJnPSoTP/2svgGnb//3VPBtesw9ms6pn2bGtscyMKyrbPFgM/jGzJD6OgnPwC",
+                data = "1|NdDLSkJRFAbgtY9U9gatBbtOgdBNEl+gkIwE7Ua3WVk5qEEDtdKNlXIaFBVNChoZmb5AkyaFzesNug4ad9GxEP+JJh97weZnrX+vKX/Z1lFwzqOcLXH2RsgKXXDuWsgK3LGxWUdZz7Ie41qG9RzXP7n+xbkU6ynWMdYz3E6sx1lPc/1bSA1rrhaF1MGQkMd7z3qC9SSbMpuKkMrE2Vdj3w/73L+r4ERIhRtCaqRbSK1lgAE5sA12wC7II2QBLIIlsAxWwIeQ2n8Cz+AFvII38I61BoXU4a2QOjoTUsdeISsSFLJOw9h3HjTAFsgLeVoewCPGHtALBkAA9IF+4BfytHZdWQ6b8t+ppmI7bgtuH1wtdjr/qci3IsESG7vgWKrZrRsvVdgc3VhPJ5K23w4l4qm0HYun0olk9hc=",
             },
             {
                 name = "Luxthos - Marksmanship",
                 spec = "Marksmanship",
-                data = "1|Nc+7SgNhEAXg+YPo7sJuJcTzg7B2EvENLEQUbARfIcVqvAVNDAhuwL14zYqFt7RJ8FoatDQIFuozBKx8goVgKSdg851hppiZeGCvMeKGvag+DeMJRhtmFkYXSQ5mA/YZzBYK77DfkH4g/YSVhdmEXcXoK6wh2D7SLy1qto2OD8uAZcJe16LmduEMI/HgTHH8TF7Y90lVi1o9JEckICGJtKidC1Yx2ScH7HlkiZyTSziLzGVyBUeY16ROfrSo4xtyS+7IPXkgj1rUyZYWVUu0qGRCizrlMb8zWjLj361M0H/ADdDxx+L+Rf/r4EgTRjeIMmoQSa6fYa8yXylueyV30l3Il9bKG/liubCy+Qc=",
+                data = "1|PdG/S0JRFAfwc59Y7wnP1c6F4NVUmtQf0FZBSyBtZYuDZb+kNEFIKX2W/XjSkJWrif0akxqzoKFff0EITQ3NglsQ3zu0fM49514OnHML7u1qj5Xv2JVp1m9Zb7Dhk+TqLrHeYsfPRpXNIzZqHHtm84nbL9x+ZY+PjXM2s9z7wJ5uNjPcfpMkxhvczEhy6Y+StM8x9ujsMdhckSQmNtmJsncUr+7APYoZkJUklopgD+RAHtiSRLqMUwHsgF3UomAeHIMT9oYQT9lLiGegAr4lif06uACX4ApcgxtJ4mBdkjh0JAknIEmUipK0gS9JWvMHg8ygywJOcyAMfsEs2MKi3sEH0kHgB8NgBATAEAhKchn9Nc1W2/jvG7ZstSy1Nm5m+grsDalBVH+RLtdZb+VsTXSx4UMU7PhVrhrlbM0t1Iepu3wnNZmKb0QTVtCaiiSWk6uReDK2uPYH",
             },
             {
                 name = "Luxthos - Survival",
                 spec = "Survival",
-                data = "1|PdC7SgNREAbgcxLxGfwPDLspbJR9AiFGozGpJYVCCosUuhIwmCWFoGusNomXbtslWHkBsfOWRLBTX0Fs1FI3YC3/FjYfU8z5z8wcjO1FE5ko3QrzkBWjUrkdyCqkYpSuhcRD7ECKkBziMqQEd4BRGe4QsgCZhSxBvuE+GqU3AljXkDlIAe4nRrtG6cUpSBYyD8mj/wTrxyjd/DJKd57JC3nF5Axbp4ljlC5ckjfyztwO6ZJDckSOyQnTbsgtuSP3ZECGhIM1P4zSwRk5JxeEfwRXRun2L4eoGqW7JV7ggS/6jG/Dik+Vn5xF+8mGKT9ZwPYh2cw+rDjp60Eqfiulx5OL/VdhUkXprWKjtl2t24693Kh7697a5h8=",
+                data = "1|VdE5SwNREAfweW/x+gLiDAxJBAsTg/aC9xFrSaFgoZIiRgTFhBSCxqTK4QEWaVNYeYDYeSUqVkY/gJ2NWmoEGxHkv4pg89vZhXkz77+ZurVSi6/kpIth1gkh27fCOilkFoqsU0J2JsS1IGuItY9rYdYxjlX4PSxkZ5s5dsk6xNrLOsr6yrErITOXZc8xaz/rCMee+X1VyAz7WXuEnMaKkH24Zh1gHeTyDXvehEzyRcjkq+AO3HNbN5oCIChkRg7BIw7PgwLYwHLu6ybYAts47QScgjNwDirgEmDF5JOQye6BfXAAMCN7JGRyH1giImQKYwjkAh1lHJ9jT03I7uSF7GdUyGlqw6W+sElByGm4BVV8awd+0Am6QAB0gCB6W3dp3Q3YTd2k3Oxsyg3Em/4XmC/zMxn3dUeZudwu62QqbY1hncKzHj8t8VcVfys7E3KrkrMYii8sR5a8Qe94fCkRTUzPfwM=",
             },
         },
         -----------------------------------------------------------------
@@ -134,17 +134,17 @@ ns.presets["preset:luxthos"] = {
             {
                 name = "Luxthos - Arcane",
                 spec = "Arcane",
-                data = "1|Lc49S0IBFMbxc0TqC8Sh5zhoH8AGe0NvSC9zQnMh2FUCocDG3i9eIuwLRFsNTU0VRDnY1NBy79ySClGtbV2XOury+58znePHjy/HV736uYNGhMYvzpJAD4igPtAGOgiqkGXIDLqnkCyCN4gDmUe3iJAgC5AlyBRkDpKDTEMykDxkFuoq8XsciZoSbwRKnH1SYvfHpqYS58aMCyV2kkqcH1Xikxa0DH1BWLDtWYlvH5T4btfYM/aNA+PQODJulPg+bUwaa8b6/53HT+PL+Fbi14+rmIdEbcLvP4KwYKe0fA20vXqMR4DOsNGwvUHVHzSo9uttrZQ2K6l0anHHLW1X/gA=",
+                data = "1|LdC9S4JRFAbwc18ztS2IS8+R0Nr6sKJPtJA+aEyKxiIwk0Ao0Gjp+0WJsH8g2qIpaCohyqGmhgp0bimFqNaGKIWo8+rye+7hcO/lnJR997hx2kweTjHZXBNI/yBdwoEHKAMlcAp4AQrIxaDHoftR3If2I/cEPQQ9jOI88gQ9Aj0G3Qs9CB2A7oPugQ5CD4AjTDaHk0k918AdZ1ILOSblv2ZSkU85ZZlUoEE4YlJDHiYVdDCpvRvwIvgO+ZBUt0zq/JJJXawLG8KmsCVsCzvCGZPK+IROYVaY+//n6k14Fz6Y1P0rk5H4ZTJWs8I3k7HWxGRkZphszi9Zh0uoE+pliAfhUbqtQpvQJXQL7UKH4JMbLSeGCXfca1qvNaescZEPVWY6BV7MpKFqgUI1S9UsV5IjZtKwK3CqUudiVlp7tDrWWq2TuTwZXop6fd7RRCS8Ev0D",
             },
             {
                 name = "Luxthos - Fire",
                 spec = "Fire",
-                data = "1|Hc69SgNREAXgexexSOHfqPeeSbM2dj6BP+CqwR8WMW+gEEw2gugTmE2wuS8gVro+gqIWoiik0CpNOhvFZ0gtZ5vvMJwZmN7Yxa2v56Pu1QpCG+EE7kZNlCzCFQgZ3BDNKqQO2cTvN2Qbg0/ILmQPTcXgC7IPOYAkkBpkB7IBWYekkC019rJPXuE5LN+TB/JInsizGrt6rcYe9YFUjV37UWOzU3LG43fyoca+TJBJMkWmyQwRMkvmyDxxxBPAJ0wlVTX27Q+hBV+5i/LyRSCNOwjZQg++UlZJuVXAFZ1uZMfhhmXmo3Z6eNyIl+Ja67zxDw==",
+                data = "1|NdC7L4NRGAbwc05Tt8HtiO973i5lkLg07EKitHFJ07CaSBq0StRQo7Zi+f4BMVGDP4BgEKKJwWWw2CzE1ISxszxfdfk970nOyXnf9yC4f+ouFWuloyS8DLxNOCeiTHQAThleWlSgpQbnHesh2CXYGXx9wM7i7Ql2HnYB64K3Z9gk7CJsFDYOOwc7DTsFm4CNiTL5LNyYKH14ByREmeUqD4+i9PgFuSRX5JrciNITx6L0Kq9MforS6W2yw2cPpCJK37aTDtJJukg36SG9xCEuAdwoU0hIlL7/hrcBt02UyVVEmd0JdhohW+SH/Ioye1myJSrQ/EJeuZJBMkRGyRgZJiMkIirQ2n9mSv6c9aHz2XCxvkwv3Xfgf9zoIXoOp1woGd0E572ebqxQMkENJPz0l/dfmeVqo8pn/apYyyRW1lLhSDi+kUv9AQ==",
             },
             {
                 name = "Luxthos - Frost",
                 spec = "Frost",
-                data = "1|RdC9SgNREAXgezdBSHXvDVt4BoW1shLEP5CgSWUnCj6BiFwQUVCxScBdV2y2FmwjqdTCWlejJlEs9wVsElBM/IM8gEwUbL7DFHMY5iDtl/uXyqnwuICoRcKZPkLUhJmEm4EqQe1BFaF82DzsLLJV6A+YNPQ3kgGoLsw4zATsDJJBmEVkT6A70F8wY9DvMAvQbehPmCkScmMUdoWELJySkLkX5pV5Y9pMh4Rc2yUhD2tMnYR8fuKNFo8JCRlfMldMzFwzN0yVuWXumHuGW2JuiRvMA/NIQtaGScj6BQnZOGPOSTg5tyIDqK4T9E70Qv5C1ISbGdr/v6MCVQxCR/ZBlf7S/02b72U5tT6/bFe9EW9ua3N75wc=",
+                data = "1|RdDNS5RRFAbwc++rmav7XnHhcyiY2kSlOPgFITazaidF/QXixLsJA8dmM1IzjrhxLbgKJsLAWrSuN610jNDN/ANRNFDojB8wuI5nZqTN7zl3cQ73nOXuQnngUTkorT/Eag2rv9HfqxJcPodbhHuhYmcqKvbOGlweroAohegu+rYRHsN3ITxD9QpcE34UfgzRFKpX4R+g7xXCOsJT+BGEDfj7CI/gJxCeqJi5JKJZFZPeVLG5jIqZ/EP+kkNyROoqZmWH7KqYH9/ZUeOzqmLiD+QjicknskW2yWfyhXwlnBJzSlwhe+Sbitm5oWJ236uYylvyTsVO9qvY7HMV++wl+Ul+8acbpKES9DqVoGefHPBYN8ktMkyS5DYZJEPsuP7aFOGaduli5fRmYrl9aD/ePvu1pf9rvoHLF0vWXIJb7GShnVGqk7PFku02rUmdyuYyraocPJmeiR4nhhL35p9mF/4B",
             },
         },
         -----------------------------------------------------------------
@@ -154,17 +154,17 @@ ns.presets["preset:luxthos"] = {
             {
                 name = "Luxthos - Brewmaster",
                 spec = "Brewmaster",
-                data = "1|LdDNSkJBGAbgOaOld1DvgHikYL6KCLqE9t5BEEFCZSpYTNsORtAu3NS2Vi3atOgmin6gMjP6HdcRlJ78KeOb3Dzv+83qZTajG/vDmaC0l4ZZgcnC5GDy0L/QPSW85DtMGaYA6oAEKAKSsNM42YXuQHehG7B30E3YGnQLdhZ2C7YCHUJ/Q//AVqHbsDHYOKiBsQQoroTnp0CfoBjoSwlv7gU0AGpi/AMTU6AuKOTnMyW8xR1u58wFc8lcoR4FtbleMzfMLVNl7kEtzhrzwDwyT8wz88q8MVYJmVhilpWQyVMlpD/ELDDHSsiRIyZUQo5WDmTg5qa23Ui3mUKeTS23vI169BC6F5SkNwgS/ZScHijSvzv/aQr9LLt0H+5aUEwX8lnfn/Rnipn13PzqWqb4Bw==",
+                data = "1|LdFNS1tBGAXguRPTxF9Qz4DkWoV5jRWLP6Hb4qJaXSml0ECrxrQqt9teIl10JdnoqhLciZsu/BM1fkA1TZW2yrgWwY80idRyxmyeM+8wDMyZpeTHclcuLq5OIZpFlEc0B/sP9s6oIHOOqISoAGlBFETDDWNrBbYFewt7DfcD9ga2ATcJ9wmuCluH/QtXg23CpeDSRiXSE5Br9HdD0kYFYQ/kEpKCXBkVvDyBJCE3yF5gYAhyC6lze9uo4M0yVztkl+yRfZx1QJpcficH5JDUyE9Ig3lEjskv8pv8IafEGaW735Jpo3Tmm1E6fEhek69G6d5NUjdK91WN0u8qRunyMz7mC6mRUTJGXpBxskaeG5VIbZMKx36SJUPkCRkgj8mgUYnOR+s69m2Esb++57Ovgs34C1mPNHxDdUgTZx0bsHdxUQcPIKqdmhlAEu25dZ9RoZ2l+3TD/pz/X7/jvygu6mQQvx8pzM2Eg+HT+dyH/KuFxdz8fw==",
             },
             {
                 name = "Luxthos - Mistweaver",
                 spec = "Mistweaver",
-                data = "1|LY29TsJgGIXftxivoeeb6gX4tiR6AQ6O2N4CA4qYaPyJrhYwcVCRAMY4GDTGxEUq2FmLiW7GQVmMyMTkwMRsPtrleYZzck55av/KXC6OS+dzkCPICeRYEWdbGqHGo8aDRkejDanj7wJSgVQhp5AaHE8nAaSBrgnHhbME+w22D+lDfmHfwV6B/Qr7C3IG+VHE7QVFnL9UxJ2eIsP9UGR484o4GCL61llT4xqR7kQ9Rfyib54XMfpUxO8tpAuKuH+oiJ9YEYcpjO4hgxvy4bjGQbLK+SbShXgzGFo+pD5T1s3JTJiCDG4hFb9k8DSkmriWuBHb8WJ3zYmL483MxvqaNWtlVrd39nLZ3dzWPw==",
+                data = "1|NY3PLgNhFMXv91U8w5y7qgdwZyRewMKypq/QRSmSij9ha9oSEVRVxUpKRGLTVms2VqYSdmJBN6KsJIJkVl3L16nN75eck3tPYWj91JrO9fLH45AdyB5kl0ml6ga+wbXBlUHLoAkpQkqQfUgZTtJkDUgFbQuOC2cK9gNsD9KFvMO+hD0D+x72C+QI8sakmhNMKnPCpFodJu0+ManGJ4JXE1cNzhCYOugwqTuzcDuJ8JlJPdYxNsekultMyo8hrDHp320mnd00+GbSXwdM+ufmnDw4rt74X8hUo9P+UtyDHI4UENaiv34M8nEBKXp5rYYhpYHLA1ciO8nIbavvXG8xsZCdj4/GE7PLK2vp1Gp66Q8=",
             },
             {
                 name = "Luxthos - Windwalker",
                 spec = "Windwalker",
-                data = "1|LZC7SgNREIZnNuIDCBH/qdZmg4XgO3jpBCutI4pKQrygc1pjtLSShDVJs1gENOYBLLf0BdQigg9gq/GKzPE03zdn/hkYzunYcTa1lRUa6ZwQl28MfegFtAltQdvQVIgnE2gX2rH41jCAi6Af0E/oD/QXjuFKyPegX9A36Dv0GzqCm0F+LsTrK0I8HMElQrzdNwyE+OFIiB97Vt0ZhvacNywYloT4edVQsvTQevfIr4V44lKIiy/WWRTip9erqA6XxCf+PH/o9JkP/uf9VFjqQZv1RsTj0FZwGtwO7gR3vf0X+Cor7C/v1irxbLy2U9tw5Wpl8+AP",
+                data = "1|RdC/L0NRFAfwc+5L/VglxDlTGV5TNPwL4sciEouaKwSpVDWct6qKrZO0qbZLYxBU/wDjG8uuHSqxoomJokRO+8Ty+Z57T3LvPffId1Aa3ihZqdw0A0aulDLJCUmGJEuSJ8kx4JBNUiQpaPuaweqraVUhx5B8MJjnV5JPkm+SH3KQnAC5cZIvkjeSd5I2SYvcNDlBBlxdYsBGixybATfLSoUB7/cZsHau1Y3S0OWMMqvMM+BDWAlod0/3qgw4cMqAg4+6nGPAepPBNMMMJrHAYF6WGUy8zWCebAart6rcKnc6RVAZUyaVKWVcmVBCDFb/6JlJkmP7D/9HHzn+u03v7RzafUa9Se7lBUkmmTLYQ5L1Mudl3suCl8VuOkYTyU0nU8aHne/udErW7uJOLOoP+Ve2YmtOZDu6nvgF",
             },
         },
         -----------------------------------------------------------------
@@ -174,17 +174,17 @@ ns.presets["preset:luxthos"] = {
             {
                 name = "Luxthos - Holy",
                 spec = "Holy",
-                data = "1|LcsxTgJRFIXhdwlxBxbnVeMCpHMPNogSNjAJjYRgcqCh4zkgakJiMoJUEBhEIVFC2IU7sLCYgnaGDZiQS2i+v/rb2dbk1AXDHJgHr8ApeAMWwBFYBLfWiN9WHpWu0lEewEj7rDyB7+DcGvn7AZfgDPwHx+AHkg24AD+RXFgjqxAsIQmRlpDU9e0pL9ZIJVRelb4yUN6UoTXyFVsj3ztr5DdAGqOxjsSBY8+B0dk9Gmuk8QwsuCAjJ2Dx2NGx20Nd7dqv+uXbmnfuXd5Vm3s=",
+                data = "1|Lc+5TkJREAbgOfcEl8TKxOKfCuxciDaW9jaKEl7gGhsNwWSksfMAronVdaGCqKho4hbfQn0BSSgoKL0Ye42Zy22+f4rJLJXEzsWYq1TnIYuQJcglZAWSgdSYrGlBspAuk/EryoGyr+wqe8qRcshkh54h15AbJtN+g9xDGpBfSB1yi/AVcgdpIpxjMk8BwgC9HCSHcEsHHDOZjUA5UU6VM+VcqTKZhw6TefxmMp9l9DoovjB5f19M1hvRW9tM1qaYvOIqkx18Vz70rAllUplRZpUpZVpJM9nh8YZxkLrnokHJUvzNVarU39SEZFzZMwOQbJy1OLv9DANX9hIGvVyU0Y9xZU0r6nFMoz/iCst+3l9bLyTTyYXN/PY/",
             },
             {
                 name = "Luxthos - Protection",
                 spec = "Protection",
-                data = "1|PdC7SgNBFAbg2UVs1Fb4p8rGUoX/FWzEG2TVFzB4IyIJmGyuXrK7gSQWip2VJhrwDdJY5jVskz5NavnXYPOd/zDDcM60Fpr91WgWv25htIygiqAGhgjqYGyNs1QEI7ANttTtgy9gAN6DVfABbIIVnayBT+AdeIvyClgD62ADLINdjL4RNKxxTo7BR1SmYEfdNsrr4LPiDiYexkPFXbEnDkRG+OJQHFnjXH2KN/EuBqIn+uLDGheX1rg2LbLWuN6GuBA90Re65/1Y46Yzwh+YMNnRjcBuMm1KH+G1/8bEeAh2tMDEQ2X6BYZh7DqLYDSv8by25rWd1OTN/1RMUjQr+dnr7Fkun9pM+TeF0vlpKVfI/wI=",
+                data = "1|PdA7SwNBFAXg2QnxgdoGzlRJrDQR768QX2BU7I1PImpAs4lvzG4kaqHYaHxhYlJYWtkINpb6EyxVSJkmtZx1SfPde4aBGU4heFgJOU23NIP3bthbsLeN0m9rkDykCHEhDqRglNU1BrmA2JADyBbkEJLjcS/kDLIP2UO2B7IN2YHsQrKQE6N0PYT3V9i7Rlmz02SEDENOkWtAjpmGkI1BzvHzwjRKxskESZBJMmWUtVIlD6RGyqRCHo3SWDZKmyhJGqUjcbJEyqRCeC/yZZSOTpCEUYHgN/kxKtDxzG2OVBkvyRUpkWtyQ27JHbk3KtD+QT4Z+0g/GSRCYiROBowKdEZryvEK9ZrWR14h/1WxMr+i6bDjfQj2TqTYKghyzOp+I8g1niD5vKutNojjT9efBX8Wvek91to2/U3XQ3lXBy2nmUkkV5MLqfXwQDixkc4szmdS6fU/",
             },
             {
                 name = "Luxthos - Retribution",
                 spec = "Retribution",
-                data = "1|RY89S4JxFMXv9YkWo7E4d7IP0FhDTUFTN+hleJ4aDRuMMAgtCJLMtgZpc5XKSsUKGgoJDQkks/e5IWntM8R9UlrO4V7O/39/Z69nJzeYc9LZcegt9B56J8RTc0I8sw1tQKvQGrQF/YD7DX2F24b7BW8Tngt9g77DW4A+w9uAtwhtQ1/gebj6FOJyRoi3WkJccqAVNJPQGyEO1oX4YkCI+0aEuH9UKDCZEOJLy67kTc5MikJchBBPp2w8NjkxORXiQtbkx541LVKw0X4uj9nuweQRem23JozhQIjPI7Z+OqRdv6PfNpD+z/u3hvZ9zj8mo+OS04X1scsZNJPdbsE6tHIErabSAe6F1jre6HjL95yTmA2vhiPRWGg4NL8cX48uJeLRtdgv",
+                data = "1|NZDLK8RRFMfP+f3yiizpnNWw84oNCzuy0BzlsfBjSSxGomQoRcbPUklRlqa8yaMsSBqSkjHeawuy9Tfoe81sPufRvffc81nMm0+WJ/1wPSp2JZZR8gtPxO7EbpQ42q3EnbNi92LXYimxD+n9EXuV3i8JpsXexN4l6BN7lmBKgn6xb7EXCQI5+1Tio2Ulnsko8aEvdinpObELJS6+VeKTMiUuaVTi0iYlry2uxKc4O7IN7AEHSnwgStyRQLkF7AC7Sry/DvziWhpH9lHi5aNm9B7EzjGmBeNXlPh4CO0nJe+zHUgBITZeBdaU/KJWZBtKfkEaeERZBVQD9UADUAPUAnW4VrlJC06Vk+aFbj7w6P4eCbNeobhiyUn4Xxir86GfM+GcwJpfuCF2mbNXfCvpuR2xVCL0OF/sOhvvszHjohuVCL08dtZy2emDy5J+vGtgdGAoNhapi/QMT07EBuOTsfGxPw==",
             },
         },
         -----------------------------------------------------------------
@@ -194,17 +194,17 @@ ns.presets["preset:luxthos"] = {
             {
                 name = "Luxthos - Discipline",
                 spec = "Discipline",
-                data = "1|LdC7TgJBGAXg2YkxEyDZBRvPVCuFooJXErHQxERjYuU7GIpNjBCRxsoVxPu1EFsLE2vlIvgAVLzB0irGzhdQz0Lznclk/sycKQ4cPA7Pu4WHNag61BtC+1Dv8JrwftGJItyCakI1oKrw8lAVqJoWcnlBC7nR1cJIzGphxF2YHwgNwewiMorQOswvmJ+IlGB+89AcgnUtjEwZgQysGKwAp861kIuWFjLVhpfkTpEckRI5JifklJxpIe0fri7IJbki1+SG3JI7ck/KvHyMxMg4mSCTJE4SZIpMkxktjOywFnLphbySihZyRT6JQ785VNVwEazLAqyYXwNWwHb9vxgp9p8oU22/HLzkM1TFLUhj8H+wn7V+NvrZ7GW41Usv38tO1E83t7nrpHN7dsJedXJbTnbb2Un/AQ==",
+                data = "1|LdA9TwJBEAbguSXoepDciQ2z1UmhfJ1gNBELTUxITKj8D4aCxAgRbaw8QDR+xkpbCwtb5UOwsLRQ/gG2iq0djdH3uOZ5s5nM7s7U/Ae34QWnepNl2Wb5xMF9ls8suyw7LJssGyxbisTqkiKRGyjS7HlFWtJh45ODU2wMODTDwXU2vtn44lCdA21FWvGa9aIin8yxGWVTVySWTUUi0+P+Ivpr4BDUwRE4BifgDJyDC3AJrvD2LIiBOEgAG8yBFEgr0kphRWLlATyChiKxJhSJ3xd8aoj7ThX5JlKKfONv4B2FGIgDFGQaJEAS2OiI3FHF3QfLpuZwoC2qbEbdC9nUrYq3IZ8cTtcUCevHHd2dWmR69ywbTlVoY//dXra87HjZHaVedKrCr/Hk6+jc3xvlR8RNp7yxU8iXdy3byhbKm4XSVmE7/wc=",
             },
             {
                 name = "Luxthos - Holy",
                 spec = "Holy",
-                data = "1|Xc8/S0JhFMfx81z0crz5OERgvwPFJSxFCUTK6J9BU9Bi0NIcDUERZA1teRXbmtvKtEGKhqaWgggaWnoBvYSWlqQxjvdOLZ8vD+cZzmnGTtujM0G/cbEEHoKXAyfBFuzBlsEMjoNdcAJeHl5ByKk8CJnepZCznkHxCcVnfV/BVmDnkLqBXYCdh11Eqgu7LGQyJaQJwx8YeUdtFekVIZOd0MGb8itkJvPKufIjZKayypbyrZ83lZbyKGRyY8q4UlU2FJ1ufwqZs5jypUu1lWulo3SFzO2xkLmbVV6FzP1Lh+qDo5zmv91KfhCe1wPH6w3HuGA3KkdNRPWiJqPasF4hrC0PGvT3q4e7O7Ujf9pfO9g7+QM=",
+                data = "1|PdA9SwNBEAbg2Tsvbs5sChHiDCghRBMTgyFoRMUIVgGbCDbWYiEogh+Fncn50VnbaUws/MDCykZBBAsV/AH+BBsbg+nkTU6b52WZ2V1m9pzdau9opeEdF1l3sZtkHWJtWLts8qw1a4d1gHWQ3TS7KSGrcCukLk6ErLk4Z+85+4DzqZCtm2wKbMY5fM5mks0EmykO19lMo6MqpOI5jhB3v3PPC2/OcmRGSCViKDyDHyE1kAJH4FtIDSbAIvhC8wI4AHdCKtkH+kEJzANUlz6E1GEH+MTnZ6AG6kLqaltIXY+BJyF18yhkB6NCducreMMsQyAFRkAWpMEwyOBGrEbl1kKs/f9pWmO2R8pFvb/92Lp5ydope5YKsA74qf0M+un6GfLTtNNNt9PkW9l6uuxZjqo01kobK8ubW9FMtLi+uvML",
             },
             {
                 name = "Luxthos - Shadow",
                 spec = "Shadow",
-                data = "1|LdA9S8JRFAbwc69ipRK09Vz444UKGmzrTUiipcwyLa1WBYVqSLCghoJEyxYnhxqKNFDbHBxq6AP4IRr7AC3NxmMuv+fC5dxzzym7bxqTCw1X6TEOq42o52tyhWAK1g3rg/Ug0If1wyrUQ0ZUZcaIapdhRzHlhTMPJww7DjuCS8COwVmCswhnGc4KnBDSNdakjKimF7OHyK0hW0WwZ0Sd5Hi1TjZIhGySKNki2yRGdkicJMgu2SNJsk8OyAP5MKJenti0Tb6MqNYEYbdWh3xzDBC+3I4b0avC0y25IxVyTz7JjxH1Nm1EdbiHriL8XzeGzLsRHT4leSM68mtER32vuoRgD9nqYHpbRLrWRKBfLGnlgVXD9AzT/5/10CAbrnyicJw7O7dzNnmUyeYv/gA=",
+                data = "1|LdC7L8NRFAfwc38/+iISm+9NfnHjkXjUY/BqQqQL9X60GCyatAkGTZAwkKiilk4GBqKV0G4dOjD4AyT8CUZ/gMVgIt8fy+fcnJtzzr3npPqo0NBfsDNXqzCWFnVzQA4RjMFUwdTAeND4A1MLo5APaVHZVi2qeALjQ3MATh+cEZg6GC/2AeOHMwhnAM4QnGE4IaxdsCamxfZ9o21Fi7oPIBlGIofgixa1meT9GBknETJBJskUmSYzZJbMkXmyQBZJlCyRZXJJnrSo22tOLJJ3LeqhnnDaQ5l88C8g7Fyc02KNCk+n5IxkyTl5Jp9aVKlFiypzGRVF+L7KDOKPWqyRLZLSYkW+tFiTNVpsf7cW2/tK3riIdtJBekgv6SRB0sWKpjsrg+ALEjl3Y+bYXaTt+y6h8SedsZQHRv1Hz3+s/YttK+mMVa2QDP/FfMjNu33cTMFOzW9vJHd2TZeJrscTqb1f",
             },
         },
         -----------------------------------------------------------------
@@ -214,17 +214,17 @@ ns.presets["preset:luxthos"] = {
             {
                 name = "Luxthos - Assassination",
                 spec = "Assassination",
-                data = "1|RdFLS1thEAbgGS/9BQq+4ya6szbgRi0Iba2uXQji1ggq8bo4VeaUQnuioRyhUBBCrIJpjBpw13rFha69/5C6a3YK8kbBzTPzzRnmm4+zVPftd1NbtJgfgn+Bf4VnUemCL8ADE83dwXOMtaSO1CN8C0/DV7DSwsIofNlEU/fwn/AfCDsQdiIehq+h8h9hD763Imxn6z94xkTHL010ZBqfxxH2m+h6I4vniI9NdG2UnLDcYKK7RbJJSiY6lWS2RbbJjokWOHvqPfmAcACld0x7SR/ivIn+es3DRxOd/Ev2THT1gVyRa3JDbk20eAqfMdFNM9Ey+8vsL+9zRjezA3JIjgi3Lt7xCRc8LpEs+cMPZxzVbKIbvLDATQpvShLBczWZp/ePTCcieKYl+7J9EnEe8fEWPIgWa/QVfOE55p5ipasaq/+omkXzg3MT82OJZKI3CFJBkJ5NfUrPzT4C",
+                data = "1|TdHPS1RRFAfwc944WXuDvqfNKLTwx5AbJQgsq7WLNm0dQ2PUdPFUzhOhZsYhnhAEwjBl0DRONuCuNBUXufZnf0juml1SfF8u2nzOPZd7zzncu5x++fFGd6FUfQpfgr+Al9EaNAn+tOAL8NBEK+fwCmOKtJE0ojvwPHwVq53cGIOvmGjuN/wN/DWifkQDiJ/A19D6heguXnUh6uXRn/CiiY5Om+jEMRYnED0y0fqBib6/zs1DE13bZ9qBeI/JmIlu1tEYYlwnDROdynL1iWyQzyZaY4+pe+Q+ohHGYfIQcdVE3/UweWCik1/Jlom+vSAn5JSckR8c6Tv8uYmum4k2eb7J881t8o3skF3CMevnnP6I6TIpky8scNNEP7BNjf1rfSbByS2T1NUtk+Aiy9W2Sar9iBwz7SY95DbpJ72kj/DGta6GFC9/qhKU/nvF0elMMSkOL3aWk4dCXEVjCNEI4r0NeFgoBXoFvnAZK/9iazCJSYlCKUhr8vvJXmH+8eyz+fFMNjMchrkwzM/k5vKzM38B",
             },
             {
                 name = "Luxthos - Outlaw",
                 spec = "Outlaw",
-                data = "1|LdC7SgNBFAbgmSiiLxD9p4qFjbDTWHpNGVACYZNKIUHUIqIWidEUXjZ5gR1SCKYwmdw2W4mooCIEn8Ai4N1KsLFNChs5uzbfP8OcOXMpDh5VxiatXuEkCrkIuYS6ARmHNOFE0NKQCThlwfjlHDEDNQo1ATUFdS4YvzqDCqOmoUZg/0JFYX/CfoD9iNo37B+oFag01D7VVmB0oTQafciUYDxdgkwKxteX4Q6g+oz2NHSQjpknFgTjO6s0CqNK9TcZ2uSRJXaJPciYYLzj0iRH0FnpvGD8+kUw7rwSb8Q78UENZ5G/EIzfxan0kDigHjWiQTSJOtESjCe/4J4Kxm+HaZNJJGjNIdqC8fsnHbAgU2j0QxY90eiOF/1Ld1x6mQ42Ic3jQoAPQSb8rBt+trSfTuQ/y156f+6NrN5WbHsjuxYyQtFsZjOV+wM=",
+                data = "1|LdG/a1NRFAfwc19Q238g9nsWo+Bg6rsKjlXbjgWlEJJMVhqkdYioQ2I1g22TTt3exUGwg81LYl4zlVoFtULoqAhCC/52Erq41kEE+b6X5fM9l3vevdzzVo4srY9k64eNx9dhr8BeRduHLcDmEU3BFtENVbzVHURrKmb7MrkIdxzuNNwFuE0V8+Ip3CRaIdwwgr9w0wh+IthF8BGtAwS/4WbgynAP2LsOfx8uVEkNPVcx5Ufo/IEtwc6qmPlr6KXQ/IyNMYRp3jVOJlTM3RusJtEsqZhXFX4aUyX3yH3YnIrp97hYILywXFMxL7+omOgr+Ua+kx888BJqWyrmTYGti+Qhz2iRDnlG2ipm9hd6T1TM6yH250mRexHZUDFvP6l4//ZUvA8n+Lxlsq2SOvaOvOfyDMmSc+Q8GSVnia+SGj4VevVkJplGPKVkYCdXEKY5mngA/V4Em19ueOYobGGQxSTbfpLdMMloapBrcca/cVB5qztxVT+8nbtzszqX8TPT1cqt0sJ/",
             },
             {
                 name = "Luxthos - Subtlety",
                 spec = "Subtlety",
-                data = "1|Lc+/S8NgEMbxt2+lo6I1aZ7XKHHqUDp30H+guIgujiIUIQiKtoO9xdiCZkgTnLRbwBSH7q4q+FunUhwyuNnBpbh0EuRMl8/3pjuuOXEUGoUw3ThfUiK1+YXTVbhDRG34eXgmvAG8Mup99EYgDWSApkHA2YcScnIfpBB9g3IgHTQHmoWrg7LoLIPmcfILMtFxlZDaD2gBrQ0EMbol0IwSKfuGuWXumHvmgXlknphn5gVBgFaBx1fmjXlXQk5llJDZC/gxVyCw+VRRCalfKyFzK8ynEtI4uBTHyYekSQfdkuXAzy82EdjJcvjxFep9pyFTGZCW1B0m9cxxy+MOkkbtpL3Rf8P03trudq1iFa312lZ1p1I9/AM=",
+                data = "1|NdA7SwNBFIbhs7PGS6NI3CTf8UK0EV2Ddjb+gWAj2liKIEIQFE0KncaYQNxik8UqpAuYgGAjKtYK3mMlYpHCTgsbESGVIierzfPOFDPMnGxguxyxy2amOI3dGTgfqJSYjIVX6D4ms/0ErpRycN/gxvHYgLaw9QQdge6GBvaemVTnOjSj8g4dhg5B90L3wAlBB1Gdgu5H7ptJfR2h6jAp6xN6APl5eHUcTjIZiXPhQrgUroUb4Va4g+chb8vyXqgJD0yqqxWFOpMKEryEXBxjUqEzJhWeFl6YVGSDSdWKcuSKSf10MpnmJZPZMiUcyy9/hFMms+1eqMl2RBgVxoUJwRbGhBiT2TG0Tzv+cLSl0jicjGZQGP6f3GAWXkJeXqgjbx9g6ymdUUYrtOXX+fDr9v01/tc3v5WS38dGs835pTMqYJTNtdnV5dRSNBadSy0mV5aSm78=",
             },
         },
         -----------------------------------------------------------------
@@ -234,17 +234,17 @@ ns.presets["preset:luxthos"] = {
             {
                 name = "Luxthos - Elemental",
                 spec = "Elemental",
-                data = "1|NdDJSkJhHAXwe69mg9WqwXNBMAgCwyb+H2mJEGQWNkGLFlogJimolPgAyb1FAw1Ui7bhuldogEuLeoZ6EZs4Ypvf+fgmDn/bfXDvS9Ssuy3IPGQOEoGEIbOQGUgcEoXETE13XMQNWYWsQd1CLKhjqBPICmQdsgh1CVmAJKBOIUtQ51AXUFdQ11A3UGeQZcgh5MjU9OkvpD6Q+oTYkKSpGcEG0jumpkdCPP0mP+TX1PSwbmp6/pErg7iw7We2IVtgekg76SCdvP2EtJf5TF643UW4F+4mPaSX9JF+MkAGiY/skX1SIe+sN0xGyCgZI+NkgkySKVPTq5t88cbVAwfHig4rOqzosKLDQg4LOSz0uls37P8B8JERbDT/CNgcUmtaySEL2QK2/Uh765BozTJ0DyTWyngza5WNfKaUKQdCgXgxV8qVq5niHw==",
+                data = "1|NdDbShtRGAXgvWeMxlOvPK0NQiqCmBoT5d80HhCExgMeoRe9MCpBxSgqKj6AYaJUxVaMF70Vwbu+ggcYelFFn0BfxFNZ03jzrdn/HmYWfz60fdowmPN+LUO+QPohXZAkpAfSDemFpCB9RmnfJSWQccgE7AnEg/0OuwcZg0xChmB/QkYhA5BB2H3IMOwh7A/YI9hj2ALsAWQHsmuU/vyMqQdMPULyRrnhO6Oc6BPS80bprhjvX8greTNKJzVxiIuZRmYIc0vMUlJGwqTcKJ29RLqSeUWuOa4gnCWrSDX5QGpILakj9aSBrJMNsklu2KyFtJM4SZAO0mmU3vrG9/7y2Mz/XnD2m1tjRZ8VfVb0WdFnIZ+FfBb6s8gtFMg0mSX3RrllN+SWx1YSJXGSIJ9IG4kZ5ZY3nTm7xRJO9Om9SVAi2Gr2IrIDyb+vfiRY/UcPc0tIV2Km8RzSm/McXQrpK2bqf6bnc54T0sGHik9uuBDc5Ta/ZjOrmbVILJJaWVhdWNvKrPwD",
             },
             {
                 name = "Luxthos - Enhancement",
                 spec = "Enhancement",
-                data = "1|NdDJL0NRGAXwe0vEAgnSxLmrWll50jaRaNNHn0gsKFLsa0gq0hoiUTu0TfwJtuIvkKC0hqIlhrAwLkrMw7YLFjZy+mLz+869N3kv34kVzy7VtM9/RxcHoQWhjcE+A20S2gScWTiscFdA98GzBncH9Dzc9WhZg2tICen1wxuHqxJNP3C1Q2+AJ8/rLtJNetAyDe8jYwfpxFcVpw+GG/YcPBE0r0IPKSFTA3xIoXFcCVldzsMW2Sa7JE32yAHJwDnKmUWRlfOQHCkhR3pJHyx51PkY+/lyTE7IKTkjV+RaCZk8Z7phumC6JXckR+5JYYsn8kxeyCt5I+/kg3wqIY0NskmSvHtQQiaWeOQSBncyuJOxT7iOkVFCxsqYEkrInVYl5O66EjL9q4S8DCghr0rJihLyumrZEvv/mlmc+QdbnMXqIbbqicCeq10w20le/BdrdpI8Zz3O0WVoE3NRiyyBw2pOZ7Yw57+n/MFAKBC21dvawsFAeHA4NBye+gM=",
+                data = "1|NdE/TBNhGAbw9/saKiZqIqaJzztVF+OfHpYmJLTpQc+YMEDVoO4FSUpIqyCJugkF4+Lu2pg4OJCYgNWiUpVqFIRBQIeGiP/dTAccXMxzheX3Pt9d7u69951sulk82D2xVbh7FU4WzmVEb8AZhTOCWBVtIST2wU0jOQu3jkQPEhF0zSJ+ScWk+lTsUAGpKcT3o+Mv4t1wW5Gs894ZcpacQ9c1pD4z9pBe/G5hTcNLIFpD8jo6Z+DmVALNyyrGK/PuhoqdDqqYuX4e59B+hfUpeUbmSYW8IK/IAmLDrFXymrxRMUPnyQUcSbNe5OW35B1ZJEtklaypmDK7SK0zrTB9JJ9Ijfh/skm+kK/kG/lOfpCf5Bf/5TF5omJKRSb267F9j+17Lwk79xZUzOQeppKKeX5Kxcw/UjGVfyrmQ0bFrDaThypmrUXF9t5RsQ/+cErvVWy1wvH1qwR2W6YVlcCuRbLE41FyjLSSk+Q4OUEifOzwPTu102Jj5hvbXzClYvgWl+Xm0Dnjr4lLi9YO3UYg5I+psZ0DexszLi/D1hEbvg9nZLxgTRBtoUaNVf3qv328YJuMv+/tZKeDfprYGuvLZnKZfDgSPp3PZvIDg7nB/Nh/",
             },
             {
                 name = "Luxthos - Restoration",
                 spec = "Restoration",
-                data = "1|LdC7S1xBGAXwmVXSCbvrgz1j1BUfUcg1vvFJqii2StA0wvUBsYgLuqe+97oRQU3wCXay2ARSJ2gCIpZqlf9EYpRYyVlv8zsfDMN8cz6Xh8XMRLGscDQLJkEPTIFpsAqsBKvBGjCD8N4Ze1F0xp4fgwBbEdyBbWAWbADrQYfgO/gSrANrwVdgC9iE4B+CewQPYCPYjuA/gkdnbMcZwgeEf8BmZ+zZb2ds51dnEt4NbisQ+eAMOO2MXVlAtK4LnuhAdK18I7pEt+hxxi7Na+oVfaJfDIhBnc5pGhIjYlS8FaeIrvT6ptgS2+KL2BG7Yk/siwNx6IzteifGxLgWTSFcdMb+OHfG/kyKlEiLv87Y09f6aafQ5r+GnbGX3eAHrL0/SRRKDeC2olRHtgA2PzfUuIFoHdEVomtwGpyJS/G/gamokLAvwHSclXFWxVkdZ02cmTi9UhbL8lMf/U/+ctbLTi6u5nMrfn4pt/wE",
+                data = "1|NdDLaxNRFAbwczPGWkRp0gf5jlpTrdrGTpv6KD5x5WuriHU5asEsbKHmLGVmbKLgC60K7iS404UrS2OhuG5EofhHuBU1QVfyjePm913uvdxzz6llo0bhfMOrvazAemA+LAfLw/pgvbB+2ACsgKit4j42VNzqKxhgexH+hI3AirCdsEGYInwL2w7bAdsG2wfbA9uN8BfCNsIObAg2ivA3wj8qbryJqINoXcXb9FnFNVdUXPkxvm9BHMAuq7j567znk3HELeYEmSQHyEEVV7nG1SFymEyRI+QoT69ydYycICfJKbKMeI0l75MH5CF5RJ6Qp2SRPCPPyQsVN3manCFnEc2ouPerKm6ph+RInvxQcctj7KxM+OkPx3HnkkrmXQlxHTYNu8L2F8kXNpxT8bpa5BP3RkmJTJAy2U/GiK/ide96nbn7b3BxnbNLH3XNlWINNoyokwwY0fpQHfEa4tb/2SIO3sBy8ULGbYTl0+xNsy/N/jQH0iyk6SeZVI4XMlmX9JHs3VPJfj2n4pVGVLq2fsPmbtxeUtnQnlLxBssNr3rxRnAzmC36xQszt6pz80G1Mjf7Fw==",
             },
         },
         -----------------------------------------------------------------
@@ -254,17 +254,17 @@ ns.presets["preset:luxthos"] = {
             {
                 name = "Luxthos - Affliction",
                 spec = "Affliction",
-                data = "1|RY4rS0RhEIZnDib/gPtOWg1vswhWwbSKP8CgRY4e2PXoomwwysdy2OolGCxiM/kTLBbxfkEtshsMgph0v+QiUzzlYZ6B4Zn20PZRZSH0w8EEOmsmmv06BuAzOjn4iphhdg58QVxBbIO34AN4Az4inoP34AV4ibgM3pkkw3uOXfAJMQWvwStf7JhoLBynrvs+LZrozwB8N9GvM/DNRBtqojMjjoprYqK1E9cpE/3YMNHPMUfNj7Ych2DXRL8nwd6xhvKHpPgvl9GiLI8GsAd2Q781v7SZN9PV6nh1OsvyetqqN9f/AA==",
+                data = "1|Pc+/S0JRFAfwc69Y2T+Q5wxhDgf6IbW0Bi2Z+Ac05BIvH1iWGA6N6ZOXtVkODQ0FEdHkXxDNZr+oSJfQQSKIpvJNSpyXuXzO/V7u5fDNe3dO/cu5tnW0gIUNAmV2hC7yKxaSyHV0TIxEkWvoxNHJIz8gPyHfIz8jV5Cr6KwiPxLo4UPhAPmFQJc66BjId8i3clskUI4tlCWW5BQjUD9d5BaB+rpGfiNQa4pALY4IfomaQIUvJc4RqI80gfoMCmH5tC0cIzcI1PcscpNApw0CfWILu0JB2BP2CfTVOYF+rxB4hsoEHt8ogWfwRqjK3bgwIUwLM/IkJKdJYUqQ6AueKeu/canj1ta2W6ffzu7Xjrm1A1l36VgOuYHcvECuZS2tBpDrvdnKWtqrMBL9y068N83ezLvT3eK+zLUzSytbyZSxHggF5k0zmTAyidTmLw==",
             },
             {
                 name = "Luxthos - Demonology",
                 spec = "Demonology",
-                data = "1|XZDBSgJRGIX/+Y3qjlgN1dC5q0lsmds2tbBU6gna5CItJLUGoo27ZkbIZcughbSIoIXSQjeBb1BkRD2Bz3CFNnFnFKHN+b5/c+7hNmauH9aOvOBuC80O5l7BLUmc95FIwuxJYquL+FASL95CZaFyUBk02xB1iA+IIsQA6gmig9gC5t+hdmEaEPeSeOlMRwVqDyINwfqq6saStpq2oo4T3d5HTIBH2CCkPpEawF6VZOx/wSlofuv4kWRUtnXsSOLlMuwX2G+SeIUkcboP/pVkHOjD6j2SF643/OkUvgk3gEfTd/8Ncjw02+sBnELU/gxueQEbszB7EePDiIlkRJUZMztmLmT4ZROzuhPL+6F5V4fHlzW3VHU2nezpuXvh1txy/Q8=",
+                data = "1|ZZE7L0RRFIX3PTceZ8RjChPrVNeEwmsILYnHEAq1SCi8IhgmEY3OnauYUkMkCqZQSTwKGonCq/AKIvwCv+FKJMi6d0Sh+dY6Ozvn7LXPasFKrmrE9TYHkT2A2kbRqRHVl0FpHJETI6p8DSXvRlT0GH4Sfi/8LmT3jdjFh9DL0I/Q49BPsMtQ/AC/G3rLiKqYIWYRsYyo9Tb4PdAJaMXqHG+boEvRjROTfOkMtob6MKISZ0bUxjBqBTXPiFUasfpf4IxSX4k3I9ZsO9GB2D3UpxFrQHgTZ945Jy6IS+KKuCa+iG8jKsfmHKe7GCM4xQ0nu9kzYutOI3bRLXHHqHVEPdFMtLClla6BaCSaWIvvihvsyvKC3H+bUNkgehgvH/f/HjaGnUy42ux+tQdnFLEjxO73oLZdT1mFsLXrqQILkZPwXPIeamk8VL8rr8m89gYa/OOvix7/ur5M4NylobHFVHpizmlyklPz6YV0Kj29/AM=",
             },
             {
                 name = "Luxthos - Destruction",
                 spec = "Destruction",
-                data = "1|PZDNSkJBGIZnRjHsCnxnIQZtwzsohTbvslWrKJPCzLT868efjudo2R20PRBB0Z20iKDuop1wTps0Zs7Bzft88w588zDjpONn9vyE91gA3zD9wvQbvxmwATpgBRyCPXAA9uGGCDyEWS2kmoBt8BJsgVcIf8AuWAfPEbyC12AHvNFCrR6Y2EfwCTbBCy1UumiqQy3UyrqZSlqolLlI+eAZWDNlXgv596yFnM/AO/AenOK4C7payOqmFpKeCXvcMtOtCcfEyHQFLeRix8RCC5V8Nw9/mFiAY7CqhRLiSbpWz4qqh6VSPjaU89nS0I81rZZKF3Mj+w9rnt0ULX0BKyNPyRTYi9mPOYg5jOlEdMOIgRcxzFr6ic5uqVlrlE9zG7nto1a72Sm3Txr1fw==",
+                data = "1|TdG/jhJRFAbwcy84LNQUfKdgWbXxD0FfwD+JzSlNNFsZYYkGEUFZcDUgzs6g8gC7uhotJtmYaCx8D0yMiTb6AvbEGRvBnJkxsfl9557c3GS+mR5xg9K1IOsfXGWy3i/IB8y+YvYNv0uQHsSFtCATyAgyhhch9BGVmYx9wpRZ+wgZQHYg25AHkC7kLsL3kCGTLdSV65CHTHYvh/ALpA+5p9stJps7rlODyTq6cwLIHUhHlzUm8+ctk1kuIE8hz3DzPsRjMu1zTEZ8JT6e1+mx4urxApNZXWay2TmTzX9WVpAppM1kXwdM9k1RuaLsKfvKc+WFcqC8VF4p35UfTPZnkSmTX1eO6asXmTK5ufJJizihnFRqyhm9d1anU8pppaq7o4dmGtfxXzeFup39ayHuI2mmlhZllou0DusEFS+uPf4BGz6TJUo+7x2ktetb40BGaY7TfJTmJE03SS9KMvSTjMpxBtnhZqPf6TVvV6qVSze2B/1hc3Cr1/0L",
             },
         },
         -----------------------------------------------------------------
@@ -274,17 +274,17 @@ ns.presets["preset:luxthos"] = {
             {
                 name = "Luxthos - Arms",
                 spec = "Arms",
-                data = "1|LdC/L0NxFAXwe0UsFoPE91w0LbNBxCC3A8mzWEXMpqZ+VZ/EhLy+vuAfEK02ogz8AV00pBgFISwS/gbbG0Vu+5bPuds5uVFv0OgP43LFc8NuRIgbS4jukS1CC0K88+0E2oQG0DY0RNQW4smiUTPq8K6hp9AT6DtuZ5HdgtZcCtEjtA6tQKvQN+iZEO8uIFuAfkA/4Q1a2TGiByEuDQnx3g9uYiHOOUMMG5QbNTLGmDFuwEgJ8fO5EL/MC/GrZ9eBcWgcCfHUgG38FeLpGWPVWDPW8bdvi+6sOG9cCvHFohB/PaHlGpkSWu7KSancw33QIMkwyWaS7W5G3ex8rHOF8ebyiu/nC356Ij3nb2z/Aw==",
+                data = "1|NdG/TxRREAfwee9yIqE1cWc8cQ8qFSIWRs1cAcnR0BqwsbEi66+VlZDgHeR2bwUTQ0k8uAvx+JFoZwwNRLNoKxqNxEr/BrttTAj57h3NZ2beS96bNy/O19p9UVpv3HMuOAUhOzUrZNqTHB9waYbVd4R1lzXiOGFNWGtCZu6PkLk+A5qgJZQ7+57Lb1nXWV+z/uSPo1x6ytp0+jn+wtpibbCusf5g3RAy1Qku+ay/WI+4fA43rgrZ57+FzMIWjvyH7K+QufGA91KOPwuZ8LyQmS4ABwi4CIpgAAwCFjKHb4TMt3Eh872MbAksg5c49TZ4CB7x8SI6+oQbPSGzeYf3HSE7fxPcErLpjpCtXAIu2lzBRgIOsPYfWQVUUX4AHkbySijX8xUcorwMroBrYARcBUNgWCjXO7BNYfYJ9kX29tNR4NWn43HDbNzFqNNmxXvnSFi35gyrj2hYa9066sbdbkw6Me7E7PCwbvMm+9NsLUqf3L0fBJ4fuMPuWPD42Qk=",
             },
             {
                 name = "Luxthos - Fury",
                 spec = "Fury",
-                data = "1|Lc49S0JxFAbw/5Gohr7A84fElqLINF8qKq042d7U4NQkLQUXHFrSq13L6GVwiaZC7MW1IQgvBNUWBG4NEfkFGvoC8WjL7+HAOTxnv694NeSWzzPQY+gJ9NQaqVfgDUMj0Bo0Co3BS8ELWiPTz+SFvKKdx2oFOgONQxfRakJXoGfw0tBZaAKahM5BF6yRvSdoGroE/WXBAfwOMsvwL6yRRNUaKV5aI7l5MkrGCC9zkyRMImScTFgj7w1yTZrkhtySO2sk/kC+0fphwz35tEaSA9ZI4Y1k2TpFcnzpkFTx+MU84uqgNfKxXg+U4He6H4ZctPMjpd5OIduARt1yQPqhsf+sMQVesDd7qW662xubjrO144TCobW8s/sH",
+                data = "1|TdA7L8NhFAbw9/03tBIfwHPQlIGUVkvVvS45+AoiJlNjQNKkgwGt+rvFZegiJiKuk6SDRDSRYCKRdBfhCxh8AXlag+X35Jy817NelTmpzeYOp6G70D3oPtxGaASah0ahXXATcP1ibOcjeSLPKKXF2NMNMR7fDcY3oD3QGHQI99fQMegB3GFoL7QbGof2QQfF2JUH6DB0BPqD4hcmRlE8EmO7t8XYzLEYmxwgLaSVcFMyRMIkQoJi7NsZOSfX5IJckisxNnZLPnH/zcML5F2MjXvF2NVXMsMLO0iS/9gi27j7YO5wqU+MsyyknjSSBjFOJibGKZD5fvbqCIifs9jnAZtiPN4X8spekLSRCImSdhIiYTGemuZTZ608AhS/Arl/ky2lm8rlZuVtqzNn0Gg259hqaNdf5pkWrr9Su4lyZhemZlOpucVUIByYTKeWfgE=",
             },
             {
                 name = "Luxthos - Protection",
                 spec = "Protection",
-                data = "1|Lc4/T8JAHMbxu5ZUURCi0ficFAqF0cnortOzKOri5KDGGBabNH0BavHPS9CxhoHFhc2wOxsnfAMSZxcTHcwPb/l8f5e73F03d5EVMze93wJXQB+sgDVwFsyBJTAEy6AHumAdbIAFo3RPYfAJGnAGnAIXMPwGl8E5cBpvH2AeLILz4CK4hEEfBNgEW0bp4038PmMYGqXP2kY5/hPGP0bpUU2oCL7s7Qn7RunXVKZDmbrCnXAt3Ai3Run1L4yNUU51TRYPwotReiMQdoRtoS2fd4zS73mZtLwlR0bVR+cKbIHNejq56f+9nu6D7mXqaA/0bAu2Jduybd22YRtOmrnJwVEcd6I4WA124yg5PUk60fkf",
+                data = "1|LdC/S1tRFAfwe9/TxFhTg6XS72lifg/aSoWie7fvorZdMjmoiLg0EDKL4aW1tGo76hgQ7CJInEr2guhQOuk/0ODsUrCDfMNbPt9zufdy7znt4Z1OuhNGhzXwOZgDs2AefAQOgeNgESyDGTABhmDJnD925sKRM3RvQQNHwST4BL1/4DNwDHwMjuDPXzAFpsEJ8Ck4ie4PEGAFrJrza2/w/yd6ZfTvzfnNZXNB7tScv86LrMhp4514b87/jlStqGqLz+Kj+CR2zfn5O/TNXDD1Wosj8cucXyiIJbEoltVEYM7fpFR5vaUj11Pmgu09sS8OxDfxRXwV380F5xfmwlRFU9gzFyYvxZWW02JGvBJz4oV4KWZ1rXTsW+BYEIFV9O/BSqE1mGcxGnxm0IHfXDkBw1YU+ASYiHM8zkycxThLcZYH2QmbtdVGY6veKMwW3jbqzY315lb9wwM=",
             },
         },
     },
