@@ -171,6 +171,11 @@ local function CreateSettingsPanel()
         "  /cm help — Show all commands"
     )
 
+    -- Footer
+    local footer = settingsFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    footer:SetPoint("BOTTOMLEFT", 16, 16)
+    footer:SetText("|cFF0057B7Made with love|r |cFFFFD700in Ukraine|r")
+
     return settingsFrame
 end
 
