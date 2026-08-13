@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.2.0](https://github.com/AqueGen/CooldownManagerProfiles/compare/v2.1.9...v2.2.0) (2026-08-13)
+
+
+### Features
+
+* add Made in Ukraine footer to settings panel ([#6](https://github.com/AqueGen/CooldownManagerProfiles/issues/6)) ([d5a85da](https://github.com/AqueGen/CooldownManagerProfiles/commit/d5a85da9aad73a97e27a96a5daa118303a40b9b0))
+
+
+### Bug Fixes
+
+* never build a realm-less character key ([#7](https://github.com/AqueGen/CooldownManagerProfiles/issues/7)) ([be3732b](https://github.com/AqueGen/CooldownManagerProfiles/commit/be3732b5a89e3d8d37b1918a779b56e16aac2087))
+
 ## [2.1.9](https://github.com/AqueGen/CooldownManagerProfiles/compare/v2.1.8...v2.1.9) (2026-08-12)
 
 

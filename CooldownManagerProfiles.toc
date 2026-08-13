@@ -3,7 +3,7 @@
 ## Notes: Save, switch and share layouts for Blizzard's Cooldown Manager.
 ## Author: AqueGen
 # x-release-please-start-version
-## Version: 2.1.9
+## Version: 2.2.0
 # x-release-please-end
 ## X-Curse-Project-ID: 1464144
 ## X-Wago-ID: EGPeA3N1
