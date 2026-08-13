@@ -28,7 +28,11 @@ function ns.GetCharKey()
     if ns.charKey then return ns.charKey end
     local name, realm = UnitFullName("player")
     if not name or name == "" then return nil end
-    realm = realm or GetNormalizedRealmName() or ""
+    realm = realm or GetNormalizedRealmName()
+    -- The realm is not available yet early in the login sequence (ADDON_LOADED).
+    -- Caching a realm-less "Name-" key then would collide same-name characters
+    -- across realms, so wait until a full key can be built.
+    if not realm or realm == "" then return nil end
     ns.charKey = name .. "-" .. realm
     return ns.charKey
 end
@@ -210,6 +214,18 @@ end
 function ns.EnsureCharTables(charKey)
     charKey = charKey or ns.charKey
     if not charKey then return end
+    -- Older versions could save data under a realm-less "Name-" key (realm was
+    -- nil at ADDON_LOADED). Move it under the full key; if the full key already
+    -- has data, the realm-less leftovers are dropped.
+    local legacyKey = (charKey:match("^([^%-]+)") or "") .. "-"
+    if legacyKey ~= "-" and legacyKey ~= charKey then
+        for _, t in ipairs({ ns.db.profiles, ns.db.layoutNameOverrides, ns.db.characters, ns.db.activeProfile }) do
+            if t[legacyKey] ~= nil then
+                if t[charKey] == nil then t[charKey] = t[legacyKey] end
+                t[legacyKey] = nil
+            end
+        end
+    end
     if not ns.db.profiles[charKey] then ns.db.profiles[charKey] = {} end
     if not ns.db.layoutNameOverrides[charKey] then ns.db.layoutNameOverrides[charKey] = {} end
     if not ns.db.characters[charKey] then ns.db.characters[charKey] = {} end
@@ -246,7 +262,12 @@ ef:SetScript("OnEvent", function(self, event, ...)
         end
         if not ns.charKey then
             ns.charKey = ns.GetCharKey()
-            if ns.charKey then ns.EnsureCharTables() end
+            if ns.charKey then
+                ns.EnsureCharTables()
+                -- CDM data can load while the char key is still unknown; OnDataReady
+                -- bailed out then, so run it now that the key exists.
+                if ns.dataLoaded and not ns.dataReadyDone then ns.OnDataReady() end
+            end
         end
         if C_CooldownViewer and not ns.dataLoaded then
             C_Timer.After(3, function()
@@ -294,6 +315,7 @@ end)
 
 function ns.OnDataReady()
     if not ns.charKey then return end
+    ns.dataReadyDone = true
     ns.EnsureCharTables()
 
     -- Auto-create "Default" profile from current state if no profiles exist
