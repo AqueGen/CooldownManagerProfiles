@@ -221,7 +221,12 @@ function ns.EnsureCharTables(charKey)
     if legacyKey ~= "-" and legacyKey ~= charKey then
         for _, t in ipairs({ ns.db.profiles, ns.db.layoutNameOverrides, ns.db.characters, ns.db.activeProfile }) do
             if t[legacyKey] ~= nil then
-                if t[charKey] == nil then t[charKey] = t[legacyKey] end
+                -- An empty placeholder table under the full key (created by an
+                -- earlier EnsureCharTables call) is not data - migrate over it.
+                local dst = t[charKey]
+                if dst == nil or (type(dst) == "table" and next(dst) == nil) then
+                    t[charKey] = t[legacyKey]
+                end
                 t[legacyKey] = nil
             end
         end
