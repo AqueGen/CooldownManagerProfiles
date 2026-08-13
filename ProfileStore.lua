@@ -1047,7 +1047,7 @@ end
 --- a /reload (the isInitialLogin gate was removed so reloads are covered). The per-
 --- character Mute persists, so a muted profile never prompts until un-muted.
 function ns.CheckAutoSync()
-    if ns.autoSyncCheckedThisSession then return end
+    if ns.autoSyncCheckedThisSession or ns.autoSyncRetryPending then return end
 
     -- Readiness guard: on /reload the data-loaded event can fire before the LayoutManager
     -- has enumerated the CDM layouts. Comparing names then sees an EMPTY live CDM and
@@ -1059,7 +1059,14 @@ function ns.CheckAutoSync()
         if okData and data and data ~= "" then
             ns.autoSyncReadyRetries = (ns.autoSyncReadyRetries or 0) + 1
             if ns.autoSyncReadyRetries <= 10 then
-                C_Timer.After(0.5, ns.CheckAutoSync)
+                -- Mark the retry as pending so a second caller (e.g. OnDataReady
+                -- and the PLAYER_ENTERING_WORLD handler both firing) cannot
+                -- start a duplicate retry chain.
+                ns.autoSyncRetryPending = true
+                C_Timer.After(0.5, function()
+                    ns.autoSyncRetryPending = false
+                    ns.CheckAutoSync()
+                end)
                 return
             end
         end
