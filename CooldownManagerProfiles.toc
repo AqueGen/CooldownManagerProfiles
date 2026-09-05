@@ -2,6 +2,7 @@
 ## Title: Cooldown Manager Profiles
 ## Notes: Save, switch and share layouts for Blizzard's Cooldown Manager.
 ## Author: AqueGen
+## X-License: All Rights Reserved
 # x-release-please-start-version
 ## Version: 2.2.0
 # x-release-please-end
