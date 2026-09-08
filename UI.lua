@@ -579,6 +579,12 @@ local function CreateMainFrame()
     local closeBtn = CreateFrame("Button", nil, mainFrame, "UIPanelCloseButton")
     closeBtn:SetPoint("TOPRIGHT", -4, -4)
 
+    -- Author's mark, bottom left where the resize grip is not. Small font, out of
+    -- the way of everything the window is actually for.
+    local madeIn = mainFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    madeIn:SetPoint("BOTTOMLEFT", 12, 8)
+    madeIn:SetText("|cFF0057B7Made|r |cFFFFD700in Ukraine|r")
+
 
     -- Resizable
     mainFrame:SetResizable(true)
