@@ -5,7 +5,8 @@ manual-changelog:
   markup-type: markdown
 
 ignore:
-  - AGENTS.md
+  # AGENTS.md is deliberately NOT ignored: the notice only does its job where
+  # an agent actually reads the addon, which is the installed folder.
   - README.md
   - RELEASE_NOTES.md
   - release-please-config.json
@@ -13,3 +14,5 @@ ignore:
   - CURSEFORGE.md
   - .claude
   - .gitignore
+  # The icon generator and its output belong to the store page, not to the game
+  - tools
