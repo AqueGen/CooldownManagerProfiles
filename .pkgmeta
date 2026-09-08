@@ -14,3 +14,5 @@ ignore:
   - CURSEFORGE.md
   - .claude
   - .gitignore
+  # The icon generator and its output belong to the store page, not to the game
+  - tools
