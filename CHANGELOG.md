@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.3.0](https://github.com/AqueGen/CooldownManagerProfiles/compare/v2.2.0...v2.3.0) (2026-09-08)
+
+
+### Features
+
+* sign the window - Made in Ukraine ([#10](https://github.com/AqueGen/CooldownManagerProfiles/issues/10)) ([bfec747](https://github.com/AqueGen/CooldownManagerProfiles/commit/bfec7477453e2f3f3b6c4d08e3c9989b8ab361b2))
+
 ## [2.2.0](https://github.com/AqueGen/CooldownManagerProfiles/compare/v2.1.9...v2.2.0) (2026-08-13)
 
 

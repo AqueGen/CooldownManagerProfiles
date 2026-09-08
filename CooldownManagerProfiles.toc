@@ -4,7 +4,7 @@
 ## Author: AqueGen
 ## X-License: All Rights Reserved
 # x-release-please-start-version
-## Version: 2.2.0
+## Version: 2.3.0
 # x-release-please-end
 ## X-Curse-Project-ID: 1464144
 ## X-Wago-ID: EGPeA3N1
