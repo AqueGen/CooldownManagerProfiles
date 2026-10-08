@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.3.1](https://github.com/AqueGen/CooldownManagerProfiles/compare/v2.3.0...v2.3.1) (2026-10-08)
+
+
+### Miscellaneous Chores
+
+* release 2.3.1 ([1c6e792](https://github.com/AqueGen/CooldownManagerProfiles/commit/1c6e792b6bf8bf2325a60531ed0cab3a5f4dae20))
+
 ## [2.3.0](https://github.com/AqueGen/CooldownManagerProfiles/compare/v2.2.0...v2.3.0) (2026-09-08)
 
 
